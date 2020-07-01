@@ -4,6 +4,6 @@
 
 ``` shell
 pm2 startup # 安装 PM2 的 systemd 配置
-pm2 start src/index.js
+pm2 start src/index.js --name QNote
 pm2 save
 ```
