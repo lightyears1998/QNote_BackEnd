@@ -9,7 +9,7 @@ QNote 后端需要特定的软件环境，详见[前置需求](docs/prerequisite
 ``` shell
 git clone https://github.com/YongXun/QNote_BackEnd.git server
 cd server
-yarn install
+yarn install --frozen-lockfile
 ```
 
 ## 运行
