@@ -8,7 +8,7 @@ app.set('secret', 'suiyi') //  这里设置的字符串可以是任意的
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-let allowCors = function(req, res, next) {
+let allowCors = function (req, res, next) {
     res.header("Access-Control-Allow-Origin", req.headers.origin); // 设置允许来自哪里的跨域请求访问（req.headers.origin为当前访问来源的域名与端口）
     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"); // 设置允许接收的请求类型
     res.header("Access-Control-Allow-Headers", "Content-Type,request-origin"); // 设置请求头中允许携带的参数
@@ -33,7 +33,7 @@ const jwt = require('jsonwebtoken');
 //登录api
 //接受:用户名 密码
 //返回:token值
-app.post('/signin', async(req, res) => {
+app.post('/signin', async (req, res) => {
     console.log(req.body);
     // 获取请求信息中的用户名,密码
     const { username, password } = req.body;
@@ -53,7 +53,7 @@ app.post('/signin', async(req, res) => {
 //异步检测注册用户api
 //接受:用户名
 //返回:用户名是否存在
-app.post('/registerName', async(req, res) => {
+app.post('/registerName', async (req, res) => {
     //获取请求信息中的用户名
     let { username } = req.body;
     await User.findOne({ username: username })
@@ -69,11 +69,11 @@ app.post('/registerName', async(req, res) => {
 //注册api
 //接受:用户名与密码
 //返回:token值
-app.post('/register', async(req, res) => {
+app.post('/register', async (req, res) => {
     //获取请求信息中的用户名,密码
     const { username, password, confirmPassword } = req.body;
     console.log(req.body)
-        //写入信息
+    //写入信息
     await User.create({ username: username, password: password, noteNum: 0, currentNoteNum: 0, completeNoteNum: 0, giveUpNoteNum: 0 });
     //新账号直接登录
     const token = jwt.sign({ id: User._id }, app.get("secret"));
@@ -83,7 +83,7 @@ app.post('/register', async(req, res) => {
 //个人主页获取信息
 //接受:用户名
 //返回:用户个人信息以及所有便签信息
-app.get('/getMessage/:username', async(req, res) => {
+app.get('/getMessage/:username', async (req, res) => {
     //获取请求信息中的用户名
     const username = req.params.username;
     // console.log(username)
@@ -105,7 +105,7 @@ app.get('/getMessage/:username', async(req, res) => {
 //添加任务api
 //接受:用户名 事务内容
 //返回:新事务的ID
-app.get('/addTask/:username/:noteContent', async(req, res) => {
+app.get('/addTask/:username/:noteContent', async (req, res) => {
     let username = req.params.username;
     let noteContent = req.params.noteContent;
     //得到新ID
@@ -116,10 +116,10 @@ app.get('/addTask/:username/:noteContent', async(req, res) => {
             let currentNoteNum = result.currentNoteNum;
             return { noteID, noteNum, currentNoteNum };
         })
-        //数据库信息更新
-        //更新User表信息
+    //数据库信息更新
+    //更新User表信息
     await User.updateOne({ username: username }, { noteNum: noteID, currentNoteNum: currentNoteNum + 1 })
-        //更新Note表信息
+    //更新Note表信息
     await Note.create({ username: username, noteID: noteID, noteContent: noteContent, done: false });
     //返回ID
     res.send(`${noteID}`);
@@ -127,7 +127,7 @@ app.get('/addTask/:username/:noteContent', async(req, res) => {
 
 //事务完成api
 //接受:用户名 完成事务的ID
-app.post('/completeTask', async(req, res) => {
+app.post('/completeTask', async (req, res) => {
     //获取传递过来的用户名与便签ID
     let { username, noteID } = req.body;
     let completeNoteNum, currentNoteNum;
@@ -136,7 +136,7 @@ app.post('/completeTask', async(req, res) => {
             completeNoteNum = result.completeNoteNum + 1;
             currentNoteNum = result.currentNoteNum - 1;
         })
-        //更新指定便签的状态
+    //更新指定便签的状态
     await Note.updateOne({ username: username, noteID: noteID }, { done: true });
     //更新用户已完成事务数目
     await User.updateOne({ username: username }, { completeNoteNum: completeNoteNum, currentNoteNum: currentNoteNum });
@@ -145,9 +145,9 @@ app.post('/completeTask', async(req, res) => {
 
 //放弃事务api
 //接受:用户名,放弃事务的ID
-app.post('/giveUpTask', async(req, res) => {
+app.post('/giveUpTask', async (req, res) => {
     console.log(req.body)
-        //获取传递过来的用户名与便签ID
+    //获取传递过来的用户名与便签ID
     const { username, noteID } = req.body;
     //用户放弃目标数+1
     let giveUpNoteNum, currentNoteNum;
@@ -156,7 +156,7 @@ app.post('/giveUpTask', async(req, res) => {
             giveUpNoteNum = result.giveUpNoteNum + 1;
             currentNoteNum = result.currentNoteNum - 1;
         })
-        //删除指定便签
+    //删除指定便签
     await Note.findOneAndDelete({ username: username, noteID: noteID });
     //用户放弃目标数+1
     await User.updateOne({ username: username }, { giveUpNoteNum: giveUpNoteNum, currentNoteNum: currentNoteNum });
@@ -165,10 +165,10 @@ app.post('/giveUpTask', async(req, res) => {
 
 //api:删除已经完成的事务
 //接受:用户名,删除事务的ID
-app.post('/deleteNote', async(req, res) => {
+app.post('/deleteNote', async (req, res) => {
     const { username, noteID } = req.body;
     console.log(username, noteID)
-        //删除指定便签
+    //删除指定便签
     await Note.findOneAndDelete({ username: username, noteID: noteID });
     res.send('done');
 })
