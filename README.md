@@ -11,3 +11,11 @@ git clone https://github.com/YongXun/QNote_BackEnd.git server
 cd server
 yarn install
 ```
+
+## 运行
+
+``` shell
+node src/index.js
+```
+
+推荐[使用 PM2 管理 QNote 进程](docs/extra.md)。
