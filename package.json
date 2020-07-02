@@ -7,7 +7,8 @@
   "author": "QNote Team",
   "license": "MIT",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node lib/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint src --ext .ts --fix",
     "postinstall": "yarn build"
@@ -19,10 +20,12 @@
     "@types/node": "^14.0.14",
     "@types/uuid": "^8.0.0",
     "body-parser": "^1.19.0",
+    "cross-env": "^7.0.2",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.20",
+    "typeorm": "^0.2.25",
     "typescript": "^3.9.6",
     "uuid": "^8.2.0"
   },
