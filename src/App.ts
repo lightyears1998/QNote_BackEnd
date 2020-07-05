@@ -1,16 +1,20 @@
 import path, { resolve } from "path";
 import { rejects } from "assert";
+import process from "process";
+import http from "http";
 import { v4 as uuidv4 } from "uuid";
 import { Connection, createConnection, getConnectionManager, getManager, AdvancedConsoleLogger } from "typeorm";
-import express, { Router } from "express";
+import express, { Router, Handler } from "express";
 import bodyParser from "body-parser";
-import * as routes from "./route";
+import packageJson from "../package.json";
+import * as routers from "./router";
 import * as entities from "./entity";
 import { CorsHandler } from "./util";
 
 
 class App {
   public readonly jwtSecret: string;
+  private server: http.Server;
   public router: express.Application;
   public db: Connection
 
@@ -33,7 +37,8 @@ class App {
       });
     } catch (err) {
       console.log(err);
-      console.error("数据库连接失败。");
+      console.error("连接数据库失败。");
+      throw err;
     }
   }
 
@@ -44,25 +49,38 @@ class App {
 
     this.router.use(express.static(path.join(__dirname, "../public")));
 
-    for (const stuff of Object.values(routes)) {
-      if (stuff instanceof Router) {
-        this.router.use(stuff as unknown as Router);
-        console.log("cool!");
-      }
-    }
+    this.router.use(routers.userRouter);
+  }
+
+  private async setupServer() {
+    this.server = http.createServer(this.router);
+    await new Promise((resolve, reject) => {
+      this.server.listen(3000);
+      this.server.on("listening", () => resolve());
+      this.server.on("error", err => reject(err));
+    }).catch(err => {
+      console.log(err);
+      console.error("监听 HTTP 端口失败。");
+      throw err;
+    });
   }
 
   public async start() {
-    await this.establishDatabaseConnection();
-    this.setupRouter();
+    console.log(`QNote v${packageJson.version}`);
 
-    await new Promise((resolve) => {
-      this.router.listen(3000, () => {
-        resolve();
-      });
-    });
+    try {
+      await this.establishDatabaseConnection();
+      this.setupRouter();
+      await this.setupServer();
+
+      console.log("服务器启动成功。");
+    } catch {
+      console.log("服务器启动失败。");
+      process.exitCode = 1;
+    }
   }
 }
+
 
 const app = new App();
 export default app;

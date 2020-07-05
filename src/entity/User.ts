@@ -4,23 +4,28 @@ import { Entity, ObjectIdColumn, ObjectID, Column } from "typeorm";
 @Entity({ name: "users" })
 export class User {
   @ObjectIdColumn()
-  id: ObjectID
+  id?: ObjectID
 
   @Column()
-  username: string
+  username?: string
 
   @Column()
-  password: string
+  password?: string
 
   @Column()
-  noteNum: number
+  noteNum?: number
 
   @Column()
-  currentNoteNum: number
+  currentNoteNum?: number
 
   @Column()
-  giveUpNoteNum: number
+  giveUpNoteNum?: number
 
   @Column()
-  completeNoteNum: number
+  completeNoteNum?: number
+
+  constructor(username?: string, password?: string) {
+    this.username = username;
+    this.password = password;
+  }
 }
