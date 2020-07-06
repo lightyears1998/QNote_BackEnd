@@ -5,11 +5,12 @@ import { v4 as uuidv4 } from "uuid";
 import { Connection, createConnection, getManager } from "typeorm";
 import express from "express";
 import bodyParser from "body-parser";
-import packageJson from "../package.json";
+import fs from "fs-extra"
 import * as routers from "./router";
 import * as entities from "./entity";
 import { CorsHandler } from "./util";
 import { User, Note } from "./entity";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 
 class App {
@@ -21,6 +22,18 @@ class App {
   public constructor() {
     this.router = express();
     this.jwtSecret = uuidv4();
+  }
+
+  public get version(): string {
+    try {
+      const packageFile = fs.readFileSync(path.resolve(__dirname, "../package.json"), {encoding: 'utf-8'})
+      const packageMeta = JSON.parse(packageFile)
+      if (packageMeta.version) {
+        return String(packageMeta.version)
+      }
+    } catch {
+      return "unknown"
+    }
   }
 
   private async establishDatabaseConnection() {
@@ -74,7 +87,7 @@ class App {
   }
 
   public async start() {
-    console.log(`QNote v${packageJson.version}`);
+    console.log(`QNote v${this.version}`);
 
     try {
       await this.establishDatabaseConnection();
