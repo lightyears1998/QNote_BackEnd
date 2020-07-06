@@ -1,15 +1,15 @@
-import path, { resolve } from "path";
-import { rejects } from "assert";
+import path from "path";
 import process from "process";
 import http from "http";
 import { v4 as uuidv4 } from "uuid";
-import { Connection, createConnection, getConnectionManager, getManager, AdvancedConsoleLogger } from "typeorm";
-import express, { Router, Handler } from "express";
+import { Connection, createConnection, getManager } from "typeorm";
+import express from "express";
 import bodyParser from "body-parser";
 import packageJson from "../package.json";
 import * as routers from "./router";
 import * as entities from "./entity";
 import { CorsHandler } from "./util";
+import { User, Note } from "./entity";
 
 
 class App {
@@ -29,12 +29,16 @@ class App {
         type:               "mongodb",
         url:                "mongodb://localhost/user",
         logger:             "advanced-console",
-        loggerLevel:        "debug",
-        logging:            "all",
         entities:           Object.values(entities),
         useNewUrlParser:    true,
         useUnifiedTopology: true
       });
+
+      const userCount = await getManager().count(User);
+      const noteCount = await getManager().count(Note);
+
+      console.log("连接数据库成功。");
+      console.log(`现有 ${userCount} 名用户，${noteCount} 条笔记。`);
     } catch (err) {
       console.log(err);
       console.error("连接数据库失败。");
@@ -54,15 +58,19 @@ class App {
 
   private async setupServer() {
     this.server = http.createServer(this.router);
-    await new Promise((resolve, reject) => {
-      this.server.listen(3000);
-      this.server.on("listening", () => resolve());
-      this.server.on("error", err => reject(err));
-    }).catch(err => {
+
+    try {
+      await new Promise((resolve, reject) => {
+        this.server.listen(3000);
+        this.server.on("listening", () => resolve());
+        this.server.on("error", err => reject(err));
+      });
+      console.log("监听 HTTP 端口成功。");
+    } catch (err) {
       console.log(err);
       console.error("监听 HTTP 端口失败。");
       throw err;
-    });
+    }
   }
 
   public async start() {
@@ -76,7 +84,10 @@ class App {
       console.log("服务器启动成功。");
     } catch {
       console.log("服务器启动失败。");
-      process.exitCode = 1;
+      if (this.db && this.db.isConnected) {
+        this.db.close();
+      }
+      process.exit(1);
     }
   }
 }

@@ -4,17 +4,17 @@ import { Entity, ObjectIdColumn, ObjectID, Column } from "typeorm";
 @Entity({ name: "notes" })
 export class Note {
   @ObjectIdColumn()
-  id?: ObjectID
+  id: ObjectID
 
   @Column()
-  username?: string
+  username: string
 
   @Column()
-  noteID?: number
+  noteID: number
 
   @Column()
-  noteContent?: string
+  noteContent: string
 
   @Column()
-  done?: boolean
+  done = false
 }

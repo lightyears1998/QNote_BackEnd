@@ -1,16 +1,25 @@
-import http from "http";
-import express from "express";
+import express, {Request, Response} from "express";
+import { body, validationResult, Result, ValidationError } from "express-validator"
 import jwt from "jsonwebtoken";
-import { getManager, AdvancedConsoleLogger } from "typeorm";
+import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { app } from "..";
 import { User, Note } from "../entity";
+import { JsonObject } from "type-fest"
 
 
 const userRouter = express.Router();
 
 
-userRouter.post("/signin", async (req, res) => {
+userRouter.post("/signin", [
+  body('username').notEmpty(),
+  body('password').notEmpty()
+], async (req: Request, res: Response<Result<ValidationError> | string | JsonObject>) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HTTP_STATUS.UNPROCESSABLE_ENTITY).send(errors)
+  }
+
   const db = getManager();
   const { username, password } = req.body;
 
@@ -44,10 +53,10 @@ userRouter.post("/register", async (req, res) => {
 
   if (password !== confirmPassword) {
     res.status(HTTP_STATUS.CONFLICT).send("两次输入的密码不一致");
+    return;
   }
 
-  const user = new User(username, password);
-  db.create(User, user);
+  await db.save(new User(username, password));
 
   // 创建帐号之后直接进入登录界面
   const token = jwt.sign({ id: username }, app.jwtSecret);
@@ -72,87 +81,81 @@ userRouter.get("/getMessage/:username", async (req, res) => {
 
 
 userRouter.get("/addTask/:username/:noteContent", async (req, res) => {
+  const db = getManager();
   const username = req.params.username;
   const noteContent = req.params.noteContent;
 
   try {
-    getManager().transaction(async db => {
-      const user = await db.findOneOrFail(User, {username})
+    const user = await db.findOneOrFail(User, { username });
 
-      let note =  {
-        username,
-        noteID: user.noteNum + 1,
-        noteContent
-      } as Note;
+    let note = new Note();
+    note.username = username;
+    note.noteID = user.noteNum + 1;
+    note.noteContent = noteContent;
+    note = await db.save(note);
 
-      note = await db.save(Note, {
-        username,
-        noteID: user.noteNum + 1,
-        noteContent
-      });
+    user.noteNum += 1;
+    user.currentNoteNum += 1;
+    await db.save(user);
 
-      user.noteNum += 1;
-      user.currentNoteNum += 1;
-      await db.save(user);
-
-      res.send(note.noteID);
-    })
-  } catch(err) {
-    console.log(err)
+    res.status(HTTP_STATUS.OK).send(`${note.noteID}`);
+  } catch (err) {
+    console.log(err);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send(undefined);
   }
 });
 
 
 userRouter.post("/completeTask", async (req, res) => {
-  const { username, noteID } = req.body;
+  const db = getManager();
+  const { username } = req.body;
+  const noteID = Number(req.body.noteID)
 
   try {
-    getManager().transaction(async db => {
-      const user = await db.findOneOrFail(User, {username})
-      user.completeNoteNum += 1;
-      user.currentNoteNum -= 1;
+    const user = await db.findOneOrFail(User, { username });
+    user.completeNoteNum += 1;
+    user.currentNoteNum -= 1;
 
-      const note = await db.findOneOrFail(Note, {username, noteID})
-      note.done = true;
-      await db.save(note);
-      await db.save(user);
+    const note = await db.findOneOrFail(Note, { username, noteID });
+    note.done = true;
+    await db.save(note);
+    await db.save(user);
 
-      res.send('done')
-    })
+    res.send("done");
   } catch (err) {
-    console.log(err)
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    console.log(err);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
 
 
 userRouter.post("/giveUpTask", async (req, res) => {
-  const { username, noteID } = req.body;
+  const db = getManager();
+  const { username } = req.body;
+  const noteID = Number(req.body.noteID)
 
   try {
-    getManager().transaction(async db => {
-      const user = await db.findOneOrFail(User, {username});
-      user.giveUpNoteNum += 1;
+    const user = await db.findOneOrFail(User, { username });
+    user.giveUpNoteNum += 1;
 
-      const note = await db.findOneOrFail(Note, {username, noteID});
-      await db.remove(note);
-      await db.save(user);
-    })
+    const note = await db.findOneOrFail(Note, { username, noteID });
+    await db.remove(note);
+    await db.save(user);
 
-    res.send('done')
+    res.send("done");
   } catch (err) {
-    console.log(err)
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    console.log(err);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
 
 
 userRouter.post("/deleteNote", async (req, res) => {
-  const { username, noteID } = req.body;
-  const db = getManager()
+  const { username } = req.body;
+  const noteID = Number(req.body.noteID)
+  const db = getManager();
 
-  db.remove(Note, {username, noteID});
+  db.delete(Note, { username, noteID });
   res.send("done");
 });
 
