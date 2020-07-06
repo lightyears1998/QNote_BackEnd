@@ -40,7 +40,7 @@ class App {
     try {
       this.db = await createConnection({
         type:               "mongodb",
-        url:                "mongodb://localhost/user",
+        url:                "mongodb://localhost/qnote",
         logger:             "advanced-console",
         entities:           Object.values(entities),
         useNewUrlParser:    true,
