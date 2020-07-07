@@ -12,12 +12,17 @@ import { User, Note } from "./entity";
 
 
 class App {
+  public readonly dataPath: string;
+  public readonly logPath: string;
   public readonly jwtSecret: string;
+
   private server: http.Server;
   public router: express.Application;
   public db: Connection
 
   public constructor() {
+    this.dataPath = path.resolve(__dirname, "../var/");
+    this.logPath = path.resolve(this.dataPath, "./log");
     this.router = express();
     this.jwtSecret = uuidv4();
   }
@@ -58,6 +63,11 @@ class App {
     }
   }
 
+  private ensureDataPath() {
+    fs.ensureDirSync(this.dataPath);
+    fs.ensureDirSync(this.logPath);
+  }
+
   private setupRouter() {
     this.router.use(bodyParser.json());
     this.router.use(bodyParser.urlencoded({ extended: true }));
@@ -95,6 +105,7 @@ class App {
     console.log(`QNote v${this.version}`);
 
     try {
+      this.ensureDataPath();
       await this.establishDatabaseConnection();
       this.setupRouter();
       await this.setupServer();
