@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import bcrypt from "bcrypt";
 import { body } from "express-validator";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
@@ -23,9 +24,14 @@ publicRouter.post("/signin", [
   const { username, password } = req.body;
 
   try {
-    const user = await db.findOneOrFail(User, { username: username, password: password });
-    const token = generateUserToken(user);
-    res.status(HTTP_STATUS.OK).send({ token });
+    const user = await db.findOneOrFail(User, { username: username });
+
+    if (bcrypt.compareSync(password, user.password)) {
+      const token = generateUserToken(user);
+      res.status(HTTP_STATUS.OK).send({ token });
+    } else {
+      throw "密码错误。";
+    }
   } catch (err) {
     console.log(err);
     res.status(HTTP_STATUS.UNAUTHORIZED).send("账号不存在或密码错误");
@@ -67,7 +73,8 @@ publicRouter.post("/register", [
     return;
   }
 
-  const user = await db.save(new User(username, password));
+  const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
+  const user = await db.save(new User(username, hashedPassword));
   res.status(HTTP_STATUS.OK).send({ token: generateUserToken(user) });
 });
 
