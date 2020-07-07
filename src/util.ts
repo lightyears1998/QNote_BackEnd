@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { JsonObject } from "type-fest";
-import app from "./App";
+import { app } from "./App";
 
 
 export function capsule(token: JsonObject): string {

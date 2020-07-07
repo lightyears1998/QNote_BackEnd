@@ -3,6 +3,7 @@ import { param } from "express-validator";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { User, Note } from "../entity";
+import { logger } from "..";
 import { UserTokenHanler } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
@@ -26,7 +27,7 @@ userRouter.get("/getMessage/:username", [
     const info = { user, note };
     res.status(HTTP_STATUS.OK).json(info);
   } catch (err) {
-    console.log(err);
+    logger.info(err);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });

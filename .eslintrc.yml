@@ -22,6 +22,8 @@ rules:
   curly:
     - warn
     - all
+  no-console:
+    - warn
   dot-location:
     - warn
     - property

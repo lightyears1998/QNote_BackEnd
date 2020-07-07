@@ -5,6 +5,7 @@ import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { JsonObject } from "type-fest";
 import { User } from "../entity";
+import { logger } from "..";
 import { generateUserToken } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
@@ -33,7 +34,7 @@ publicRouter.post("/signin", [
       throw "密码错误。";
     }
   } catch (err) {
-    console.log(err);
+    logger.info(err);
     res.status(HTTP_STATUS.UNAUTHORIZED).send("账号不存在或密码错误");
   }
 });

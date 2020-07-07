@@ -4,6 +4,7 @@ import { JsonObject } from "type-fest";
 import { ObjectID } from "mongodb";
 import { uncapsule, capsule } from "../util";
 import { User } from "../entity";
+import { logger } from "..";
 
 
 export interface UserToken {
@@ -49,13 +50,12 @@ export const UserTokenHanler: express.Handler = function (req, res, next) {
 
     try {
       const parsedToken = parseUserToken(token);
-      console.log(parsedToken);
       res.locals.user = {
         id:       new ObjectID(parsedToken.userID),
         username: parsedToken.username
       };
     } catch (err) {
-      console.log(err);
+      logger.info(err);
       res.status(HTTP_STATUS.UNAUTHORIZED).send("Token 无效。");
       return;
     }

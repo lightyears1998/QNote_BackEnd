@@ -6,9 +6,11 @@ import { Connection, createConnection, getManager } from "typeorm";
 import express, { Router } from "express";
 import bodyParser from "body-parser";
 import fs from "fs-extra";
+import winston from "winston";
 import * as routers from "./router";
 import * as entities from "./entity";
 import { User, Note } from "./entity";
+import { createLogger } from "./logger";
 
 
 class App {
@@ -16,6 +18,7 @@ class App {
   public readonly logPath: string;
   public readonly jwtSecret: string;
 
+  public logger: winston.Logger;
   private server: http.Server;
   public router: express.Application;
   public db: Connection
@@ -23,6 +26,10 @@ class App {
   public constructor() {
     this.dataPath = path.resolve(__dirname, "../var/");
     this.logPath = path.resolve(this.dataPath, "./log");
+
+    this.ensureDataPath();
+    this.setupLogger();
+
     this.router = express();
     this.jwtSecret = uuidv4();
   }
@@ -54,11 +61,11 @@ class App {
       const userCount = await getManager().count(User);
       const noteCount = await getManager().count(Note);
 
-      console.log("连接数据库成功。");
-      console.log(`现有 ${userCount} 名用户，${noteCount} 条笔记。`);
+      logger.info("连接数据库成功。");
+      logger.info(`现有 ${userCount} 名用户，${noteCount} 条笔记。`);
     } catch (err) {
-      console.log(err);
-      console.error("连接数据库失败。");
+      logger.info(err);
+      logger.error("连接数据库失败。");
       throw err;
     }
   }
@@ -66,6 +73,10 @@ class App {
   private ensureDataPath() {
     fs.ensureDirSync(this.dataPath);
     fs.ensureDirSync(this.logPath);
+  }
+
+  private setupLogger() {
+    this.logger = createLogger(this.logPath);
   }
 
   private setupRouter() {
@@ -93,26 +104,25 @@ class App {
         this.server.on("listening", () => resolve());
         this.server.on("error", err => reject(err));
       });
-      console.log("监听 HTTP 端口成功。");
+      logger.info("监听 HTTP 端口成功。");
     } catch (err) {
-      console.log(err);
-      console.error("监听 HTTP 端口失败。");
+      logger.info(err);
+      logger.error("监听 HTTP 端口失败。");
       throw err;
     }
   }
 
   public async start() {
-    console.log(`QNote v${this.version}`);
-
     try {
-      this.ensureDataPath();
+      logger.info(`QNote v${this.version}`);
+
       await this.establishDatabaseConnection();
       this.setupRouter();
       await this.setupServer();
 
-      console.log("服务器启动成功。");
+      logger.info("服务器启动成功。");
     } catch {
-      console.log("服务器启动失败。");
+      logger.info("服务器启动失败。");
       this.stop();
       process.exit(1);
     }
@@ -121,21 +131,23 @@ class App {
   public stop() {
     if (this.db && this.db.isConnected) {
       this.db.close();
-      console.log("数据库连接关闭。");
+      logger.info("数据库连接关闭。");
     }
     if (this.server && this.server.listening) {
       this.server.close();
-      console.log("停止监听 HTTP 端口。");
+      logger.info("停止监听 HTTP 端口。");
     }
-    console.log("服务器程序退出。");
+    logger.info("服务器程序退出。");
   }
 }
-
-
-const app = new App();
-export default app;
 
 
 process.on("exit", () => {
   app.stop();
 });
+
+
+export const app = new App();
+export const logger = app.logger;
+
+app.start();

@@ -38,7 +38,8 @@
     "type-fest": "^0.16.0",
     "typeorm": "^0.2.25",
     "typescript": "^3.9.6",
-    "uuid": "^8.2.0"
+    "uuid": "^8.2.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.5.0",

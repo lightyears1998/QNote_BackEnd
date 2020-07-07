@@ -3,6 +3,7 @@ import { body, param } from "express-validator";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { User, Note } from "../entity";
+import { logger } from "..";
 import { UserTokenHanler, getCurrentUser } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
@@ -44,7 +45,7 @@ noteRouter.get("/addTask/:username/:noteContent", [
 
     res.status(HTTP_STATUS.OK).send(`${note.noteID}`);
   } catch (err) {
-    console.log(err);
+    logger.info(err);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send(undefined);
   }
 });
@@ -76,7 +77,7 @@ noteRouter.post("/completeTask", [
 
     res.send("done");
   } catch (err) {
-    console.log(err);
+    logger.info(err);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
@@ -106,7 +107,7 @@ noteRouter.post("/giveUpTask", [
 
     res.send("done");
   } catch (err) {
-    console.log(err);
+    logger.info(err);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
