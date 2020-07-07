@@ -9,6 +9,8 @@
   "scripts": {
     "start": "node lib/index.js",
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
+    "clean": "del lib",
+    "prebuild": "yarn clean",
     "build": "tsc",
     "lint": "eslint src --ext .ts --fix",
     "postinstall": "yarn build"
@@ -22,6 +24,7 @@
     "@types/uuid": "^8.0.0",
     "body-parser": "^1.19.0",
     "cross-env": "^7.0.2",
+    "del-cli": "^3.0.1",
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
     "fs-extra": "^9.0.1",
