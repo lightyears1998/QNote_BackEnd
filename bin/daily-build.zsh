@@ -16,10 +16,8 @@ env
 echo "\n[git pull]"
 git pull
 
-echo "\n[yarn install and build]"
+echo "\n[yarn install]"
 yarn install
-rm -rf ./lib
-yarn build
 
 echo "\n[pm2 restart]"
 pm2 restart "$PM2_PROCESS_NAME"
