@@ -1,0 +1,5 @@
+{
+  "events": {
+    "restart": "kill-port --port 3000"
+  }
+}

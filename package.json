@@ -27,6 +27,7 @@
     "fs-extra": "^9.0.1",
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
+    "kill-port": "^1.6.0",
     "mongoose": "^5.9.20",
     "reflect-metadata": "^0.1.13",
     "type-fest": "^0.16.0",

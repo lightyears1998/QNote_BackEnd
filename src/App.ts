@@ -3,14 +3,13 @@ import process from "process";
 import http from "http";
 import { v4 as uuidv4 } from "uuid";
 import { Connection, createConnection, getManager } from "typeorm";
-import express from "express";
+import express, { Router } from "express";
 import bodyParser from "body-parser";
-import fs from "fs-extra"
+import fs from "fs-extra";
 import * as routers from "./router";
 import * as entities from "./entity";
 import { CorsHandler } from "./util";
 import { User, Note } from "./entity";
-import { JsonWebTokenError } from "jsonwebtoken";
 
 
 class App {
@@ -26,13 +25,13 @@ class App {
 
   public get version(): string {
     try {
-      const packageFile = fs.readFileSync(path.resolve(__dirname, "../package.json"), {encoding: 'utf-8'})
-      const packageMeta = JSON.parse(packageFile)
+      const packageFile = fs.readFileSync(path.resolve(__dirname, "../package.json"), { encoding: "utf-8" });
+      const packageMeta = JSON.parse(packageFile);
       if (packageMeta.version) {
-        return String(packageMeta.version)
+        return String(packageMeta.version);
       }
     } catch {
-      return "unknown"
+      return "unknown";
     }
   }
 
@@ -66,7 +65,12 @@ class App {
 
     this.router.use(express.static(path.join(__dirname, "../public")));
 
-    this.router.use(routers.userRouter);
+    const apiRouter = Router();
+    apiRouter.use("/", routers.publicRouter);
+    apiRouter.use("/user", routers.userRouter);
+    apiRouter.use("/note", routers.noteRouter);
+
+    this.router.use("/api", apiRouter);
   }
 
   private async setupServer() {
@@ -97,14 +101,29 @@ class App {
       console.log("服务器启动成功。");
     } catch {
       console.log("服务器启动失败。");
-      if (this.db && this.db.isConnected) {
-        this.db.close();
-      }
+      this.stop();
       process.exit(1);
     }
+  }
+
+  public stop() {
+    if (this.db && this.db.isConnected) {
+      this.db.close();
+      console.log("数据库连接关闭。");
+    }
+    if (this.server.listening) {
+      this.server.close();
+      console.log("停止监听 HTTP 端口。");
+    }
+    console.log("服务器程序退出。");
   }
 }
 
 
 const app = new App();
 export default app;
+
+
+process.on("exit", () => {
+  app.stop();
+});
