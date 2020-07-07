@@ -1,4 +1,6 @@
 import express from "express";
+import { validationResult } from "express-validator";
+import * as HTTP_STATUS from "http-status-codes";
 
 
 export const CorsHandler: express.Handler = function (req, res, next) {
@@ -9,4 +11,15 @@ export const CorsHandler: express.Handler = function (req, res, next) {
   res.header("Access-control-max-age", "1000"); // 设置请求通过预检后多少时间内不再检验，减少预请求发送次数
 
   next();
+};
+
+
+export const ArgumentValidationResultHandler: express.Handler = function (req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HTTP_STATUS.UNPROCESSABLE_ENTITY).send(errors);
+    res.end();
+  } else {
+    next();
+  }
 };

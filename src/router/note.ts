@@ -1,21 +1,28 @@
 import express, { Request, Response } from "express";
-import { body, validationResult, Result, ValidationError } from "express-validator";
+import { body, param } from "express-validator";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { User, Note } from "../entity";
 import { UserTokenHanler } from "./token";
+import { ArgumentValidationResultHandler } from "./util";
 
 
 export const noteRouter = express.Router();
 
 
+/**
+ * 笔记路由
+ */
 noteRouter.use(UserTokenHanler);
 
 
-noteRouter.get("/addTask/:username/:noteContent", async (req, res) => {
+noteRouter.get("/addTask/:username/:noteContent", [
+  param("username").notEmpty(),
+  param("noteContent").notEmpty(),
+  ArgumentValidationResultHandler
+], async (req: Request, res: Response<string>) => {
   const db = getManager();
-  const username = req.params.username;
-  const noteContent = req.params.noteContent;
+  const { username, noteContent } = req.params;
 
   try {
     const user = await db.findOneOrFail(User, { username });
@@ -38,7 +45,11 @@ noteRouter.get("/addTask/:username/:noteContent", async (req, res) => {
 });
 
 
-noteRouter.post("/completeTask", async (req, res) => {
+noteRouter.post("/completeTask", [
+  body("username").isString().notEmpty(),
+  body("noteID").isNumeric(),
+  ArgumentValidationResultHandler
+], async (req: Request, res: Response<string>) => {
   const db = getManager();
   const { username } = req.body;
   const noteID = Number(req.body.noteID);
@@ -61,7 +72,11 @@ noteRouter.post("/completeTask", async (req, res) => {
 });
 
 
-noteRouter.post("/giveUpTask", async (req, res) => {
+noteRouter.post("/giveUpTask", [
+  body("username").isString().notEmpty(),
+  body("noteID").isNumeric(),
+  ArgumentValidationResultHandler
+], async (req, res) => {
   const db = getManager();
   const { username } = req.body;
   const noteID = Number(req.body.noteID);
@@ -82,7 +97,11 @@ noteRouter.post("/giveUpTask", async (req, res) => {
 });
 
 
-noteRouter.post("/deleteNote", async (req, res) => {
+noteRouter.post("/deleteNote", [
+  body("username").isString().notEmpty(),
+  body("noteID").isNumeric(),
+  ArgumentValidationResultHandler
+], async (req: Request, res: Response<string>) => {
   const { username } = req.body;
   const noteID = Number(req.body.noteID);
   const db = getManager();

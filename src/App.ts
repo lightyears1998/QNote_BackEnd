@@ -41,6 +41,7 @@ class App {
         url:                "mongodb://localhost/qnote",
         logger:             "advanced-console",
         entities:           Object.values(entities),
+        synchronize:        true,
         useNewUrlParser:    true,
         useUnifiedTopology: true
       });
@@ -111,7 +112,7 @@ class App {
       this.db.close();
       console.log("数据库连接关闭。");
     }
-    if (this.server.listening) {
+    if (this.server && this.server.listening) {
       this.server.close();
       console.log("停止监听 HTTP 端口。");
     }

@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express";
-import { body, validationResult, Result, ValidationError } from "express-validator";
+import { param } from "express-validator";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { User, Note } from "../entity";
 import { UserTokenHanler } from "./token";
+import { ArgumentValidationResultHandler } from "./util";
 
 
 const userRouter = express.Router();
@@ -12,7 +13,10 @@ const userRouter = express.Router();
 userRouter.use(UserTokenHanler);
 
 
-userRouter.get("/getMessage/:username", async (req, res) => {
+userRouter.get("/getMessage/:username", [
+  param("username").notEmpty(),
+  ArgumentValidationResultHandler
+], async (req: Request, res: Response<unknown>) => {
   const db = getManager();
   const username = req.params.username;
 

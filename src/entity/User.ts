@@ -1,7 +1,8 @@
-import { Entity, ObjectIdColumn, ObjectID, Column } from "typeorm";
+import { Entity, ObjectIdColumn, ObjectID, Column, Unique } from "typeorm";
 
 
 @Entity({ name: "users" })
+@Unique(["username"])
 export class User {
   @ObjectIdColumn()
   id: ObjectID
