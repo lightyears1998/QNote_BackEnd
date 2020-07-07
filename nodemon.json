@@ -1,5 +1,5 @@
 {
   "events": {
-    "restart": "kill-port --port 3000"
+    "start": "kill-port --port 3000"
   }
 }
