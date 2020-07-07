@@ -3,7 +3,7 @@ import { body, param } from "express-validator";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { User, Note } from "../entity";
-import { UserTokenHanler } from "./token";
+import { UserTokenHanler, getCurrentUser } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
 
@@ -23,6 +23,11 @@ noteRouter.get("/addTask/:username/:noteContent", [
 ], async (req: Request, res: Response<string>) => {
   const db = getManager();
   const { username, noteContent } = req.params;
+
+  if (getCurrentUser(res).username !== username) {
+    res.status(HTTP_STATUS.UNAUTHORIZED).send("登录用户名与当前用户名不匹配。");
+    return;
+  }
 
   try {
     const user = await db.findOneOrFail(User, { username });
@@ -54,6 +59,11 @@ noteRouter.post("/completeTask", [
   const { username } = req.body;
   const noteID = Number(req.body.noteID);
 
+  if (getCurrentUser(res).username !== username) {
+    res.status(HTTP_STATUS.UNAUTHORIZED).send("登录用户名与当前用户名不匹配。");
+    return;
+  }
+
   try {
     const user = await db.findOneOrFail(User, { username });
     user.completeNoteNum += 1;
@@ -76,10 +86,15 @@ noteRouter.post("/giveUpTask", [
   body("username").isString().notEmpty(),
   body("noteID").isNumeric(),
   ArgumentValidationResultHandler
-], async (req, res) => {
+], async (req: Request, res: Response<string>) => {
   const db = getManager();
   const { username } = req.body;
   const noteID = Number(req.body.noteID);
+
+  if (getCurrentUser(res).username !== username) {
+    res.status(HTTP_STATUS.UNAUTHORIZED).send("登录用户名与当前用户名不匹配。");
+    return;
+  }
 
   try {
     const user = await db.findOneOrFail(User, { username });

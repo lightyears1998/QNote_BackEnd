@@ -1,6 +1,7 @@
-import express from "express";
+import express, { Response } from "express";
 import * as HTTP_STATUS from "http-status-codes";
 import { JsonObject } from "type-fest";
+import { ObjectID } from "mongodb";
 import { uncapsule, capsule } from "../util";
 import { User } from "../entity";
 
@@ -22,7 +23,7 @@ export function generateUserToken(user: User): string {
 
 
 export function parseUserToken(token: string): UserToken {
-  const parsedToken = uncapsule(token);
+  const parsedToken = uncapsule(token) as unknown as UserToken;
 
   const keys: Array<keyof UserToken> = ["userID", "username"];
   for (const key of keys) {
@@ -32,7 +33,7 @@ export function parseUserToken(token: string): UserToken {
   }
 
   return {
-    userID:   String(parsedToken.id),
+    userID:   String(parsedToken.userID),
     username: String(parsedToken.username)
   };
 }
@@ -47,8 +48,14 @@ export const UserTokenHanler: express.Handler = function (req, res, next) {
     }
 
     try {
-      parseUserToken(token);
+      const parsedToken = parseUserToken(token);
+      console.log(parsedToken);
+      res.locals.user = {
+        id:       new ObjectID(parsedToken.userID),
+        username: parsedToken.username
+      };
     } catch (err) {
+      console.log(err)
       res.status(HTTP_STATUS.UNAUTHORIZED).send("Token 无效。");
       return;
     }
@@ -56,3 +63,12 @@ export const UserTokenHanler: express.Handler = function (req, res, next) {
 
   next();
 };
+
+
+export function getCurrentUser(res: Response): {id: ObjectID, username: string} {
+  if (res.locals.user) {
+    return res.locals.user;
+  }
+
+  throw "当前 Request 没有对应的 User。";
+}
