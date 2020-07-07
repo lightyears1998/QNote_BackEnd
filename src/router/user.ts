@@ -1,15 +1,15 @@
 import express, { Request, Response } from "express";
 import { body, validationResult, Result, ValidationError } from "express-validator";
-import jwt from "jsonwebtoken";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
-import { JsonObject } from "type-fest";
-import { app } from "..";
 import { User, Note } from "../entity";
-import { capsule, uncapsule } from "./token";
+import { UserTokenHanler } from "./token";
 
 
 const userRouter = express.Router();
+
+
+userRouter.use(UserTokenHanler);
 
 
 userRouter.get("/getMessage/:username", async (req, res) => {

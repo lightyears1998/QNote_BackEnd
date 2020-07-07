@@ -8,7 +8,6 @@ import bodyParser from "body-parser";
 import fs from "fs-extra";
 import * as routers from "./router";
 import * as entities from "./entity";
-import { CorsHandler } from "./util";
 import { User, Note } from "./entity";
 
 
@@ -61,7 +60,8 @@ class App {
   private setupRouter() {
     this.router.use(bodyParser.json());
     this.router.use(bodyParser.urlencoded({ extended: true }));
-    this.router.use(CorsHandler);
+
+    this.router.use(routers.CorsHandler);
 
     this.router.use(express.static(path.join(__dirname, "../public")));
 

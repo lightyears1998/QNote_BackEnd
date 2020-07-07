@@ -1,12 +1,10 @@
 import express, { Request, Response } from "express";
 import { body, validationResult, Result, ValidationError } from "express-validator";
-import jwt from "jsonwebtoken";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { JsonObject } from "type-fest";
-import { app } from "..";
-import { User, Note } from "../entity";
-import { capsule, uncapsule } from "./token";
+import { User } from "../entity";
+import { generateUserToken } from "./token";
 
 
 /**
@@ -29,7 +27,7 @@ publicRouter.post("/signin", [
 
   try {
     const user = await db.findOneOrFail(User, { username: username, password: password });
-    const token = capsule({ id: user.id.toHexString(), username });
+    const token = generateUserToken(user);
     res.status(HTTP_STATUS.OK).send({ token });
   } catch (err) {
     console.log(err);
@@ -60,11 +58,8 @@ publicRouter.post("/register", async (req, res) => {
     return;
   }
 
-  await db.save(new User(username, password));
-
-  // 创建帐号之后直接进入登录界面
-  const token = jwt.sign({ id: username }, app.jwtSecret);
-  res.status(HTTP_STATUS.OK).send({ token });
+  const user = await db.save(new User(username, password));
+  res.status(HTTP_STATUS.OK).send({ token: generateUserToken(user) });
 });
 
 
