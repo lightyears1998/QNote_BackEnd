@@ -55,7 +55,7 @@ export const UserTokenHanler: express.Handler = function (req, res, next) {
         username: parsedToken.username
       };
     } catch (err) {
-      console.log(err)
+      console.log(err);
       res.status(HTTP_STATUS.UNAUTHORIZED).send("Token 无效。");
       return;
     }
