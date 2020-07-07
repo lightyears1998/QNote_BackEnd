@@ -1,5 +1,6 @@
 {
   "events": {
+    "restart": "kill-port --port 3000",
     "crash": "kill-port --port 3000"
   }
 }
