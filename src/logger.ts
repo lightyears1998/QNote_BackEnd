@@ -1,4 +1,5 @@
 import winston from "winston";
+import "winston-daily-rotate-file";
 
 
 export function createLogger(logPath: string): winston.Logger {
@@ -18,8 +19,15 @@ export function createLogger(logPath: string): winston.Logger {
           winston.format.printf(info => `${info.level}: ${info.message}`)
         )
       }),
-      new winston.transports.File({ filename: `${logPath}/combined.log`, maxFiles: 10, maxsize: 1024 }),
-      new winston.transports.File({ filename: `${logPath}/error.log`, level: "error", maxFiles: 10, maxsize: 1024 })
+      new winston.transports.DailyRotateFile({
+        filename: `${logPath}/qnote-%DATE%-combined.log`,
+        maxFiles: "14d"
+      }),
+      new winston.transports.DailyRotateFile({
+        filename: `${logPath}/qnote-%DATE%-error.log`,
+        level:    "error",
+        maxFiles: "14d"
+      })
     ]
   });
 }

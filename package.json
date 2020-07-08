@@ -39,7 +39,8 @@
     "typeorm": "^0.2.25",
     "typescript": "^3.9.6",
     "uuid": "^8.2.0",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.5.0",
