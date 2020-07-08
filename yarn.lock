@@ -86,6 +86,13 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/bson@*":
+  version "4.0.2"
+  resolved "https://registry.npm.taobao.org/@types/bson/download/@types/bson-4.0.2.tgz#7accb85942fc39bbdb7515d4de437c04f698115f"
+  integrity sha1-esy4WUL8ObvbdRXU3kN8BPaYEV8=
+  dependencies:
+    "@types/node" "*"
+
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.npm.taobao.org/@types/color-name/download/@types/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
@@ -168,6 +175,14 @@
   version "1.2.0"
   resolved "https://registry.npm.taobao.org/@types/minimist/download/@types/minimist-1.2.0.tgz#69a23a3ad29caf0097f06eda59b361ee2f0639f6"
   integrity sha1-aaI6OtKcrwCX8G7aWbNh7i8GOfY=
+
+"@types/mongodb@^3.5.25":
+  version "3.5.25"
+  resolved "https://registry.npm.taobao.org/@types/mongodb/download/@types/mongodb-3.5.25.tgz?cache=0&sync_timestamp=1593000485551&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fmongodb%2Fdownload%2F%40types%2Fmongodb-3.5.25.tgz#ab187db04d79f8e3f15af236327dc9139d9d4736"
+  integrity sha1-qxh9sE15+OPxWvI2Mn3JE52dRzY=
+  dependencies:
+    "@types/bson" "*"
+    "@types/node" "*"
 
 "@types/node@*", "@types/node@^14.0.14":
   version "14.0.19"
