@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express";
-import { body, param } from "express-validator";
-import { getManager } from "typeorm";
+import { body } from "express-validator";
+import { getManager, getMongoManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
+import { JsonObject } from "type-fest";
 import { User, Note } from "../entity";
 import { logger } from "..";
 import { UserTokenHanler, getCurrentUser } from "./token";
@@ -17,21 +18,16 @@ export const noteRouter = express.Router();
 noteRouter.use(UserTokenHanler);
 
 
-noteRouter.get("/addTask/:username/:noteContent", [
-  param("username").notEmpty(),
-  param("noteContent").notEmpty(),
+noteRouter.post("/addTask", [
+  body("noteContent").isString().notEmpty(),
   ArgumentValidationResultHandler
-], async (req: Request, res: Response<string>) => {
-  const db = getManager();
-  const { username, noteContent } = req.params;
-
-  if (getCurrentUser(res).username !== username) {
-    res.status(HTTP_STATUS.UNAUTHORIZED).send("登录用户名与当前用户名不匹配。");
-    return;
-  }
+], async (req: Request, res: Response<JsonObject>) => {
+  const db = getMongoManager();
+  const { noteContent } = req.body;
+  const { userID, username } = getCurrentUser(res);
 
   try {
-    const user = await db.findOneOrFail(User, { username });
+    const user = await db.findOneOrFail(User, userID);
 
     let note = new Note();
     note.username = username;
@@ -43,10 +39,10 @@ noteRouter.get("/addTask/:username/:noteContent", [
     user.currentNoteNum += 1;
     await db.save(user);
 
-    res.status(HTTP_STATUS.OK).send(`${note.noteID}`);
+    res.status(HTTP_STATUS.OK).send({ noteID: note.noteID });
   } catch (err) {
     logger.info(err);
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send(undefined);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({ error: err });
   }
 });
 

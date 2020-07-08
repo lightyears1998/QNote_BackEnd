@@ -31,7 +31,7 @@ publicRouter.post("/signin", [
       const token = generateUserToken(user);
       res.status(HTTP_STATUS.OK).send({ token });
     } else {
-      throw "密码错误。";
+      throw `${username} 用户的密码错误，拒绝登录。`;
     }
   } catch (err) {
     logger.info(err);

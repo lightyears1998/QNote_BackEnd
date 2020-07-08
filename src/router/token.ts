@@ -1,7 +1,6 @@
 import express, { Response } from "express";
 import * as HTTP_STATUS from "http-status-codes";
 import { JsonObject } from "type-fest";
-import { ObjectID } from "mongodb";
 import { uncapsule, capsule } from "../util";
 import { User } from "../entity";
 import { logger } from "..";
@@ -50,10 +49,7 @@ export const UserTokenHanler: express.Handler = function (req, res, next) {
 
     try {
       const parsedToken = parseUserToken(token);
-      res.locals.user = {
-        id:       new ObjectID(parsedToken.userID),
-        username: parsedToken.username
-      };
+      res.locals.user = parsedToken;
     } catch (err) {
       logger.info(err);
       res.status(HTTP_STATUS.UNAUTHORIZED).send("Token 无效。");
@@ -65,7 +61,7 @@ export const UserTokenHanler: express.Handler = function (req, res, next) {
 };
 
 
-export function getCurrentUser(res: Response): {id: ObjectID, username: string} {
+export function getCurrentUser(res: Response): UserToken {
   if (res.locals.user) {
     return res.locals.user;
   }

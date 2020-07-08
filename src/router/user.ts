@@ -1,11 +1,9 @@
 import express, { Request, Response } from "express";
-import { param } from "express-validator";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { User, Note } from "../entity";
 import { logger } from "..";
-import { UserTokenHanler } from "./token";
-import { ArgumentValidationResultHandler } from "./util";
+import { UserTokenHanler, getCurrentUser } from "./token";
 
 
 const userRouter = express.Router();
@@ -14,12 +12,9 @@ const userRouter = express.Router();
 userRouter.use(UserTokenHanler);
 
 
-userRouter.get("/getMessage/:username", [
-  param("username").notEmpty(),
-  ArgumentValidationResultHandler
-], async (req: Request, res: Response<unknown>) => {
+userRouter.get("/getMessage", async (req: Request, res: Response<unknown>) => {
   const db = getManager();
-  const username = req.params.username;
+  const { username } = getCurrentUser(res);
 
   try {
     const note = await db.find(Note, { username: username });
