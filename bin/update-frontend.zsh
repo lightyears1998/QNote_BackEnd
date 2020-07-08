@@ -24,6 +24,7 @@ echo "\n[update codebase]"
 git pull
 
 echo "\n[build]"
+npm install
 npm run build
 
 echo "\n[deploy]"
