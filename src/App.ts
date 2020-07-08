@@ -4,6 +4,7 @@ import http from "http";
 import { v4 as uuidv4 } from "uuid";
 import { Connection, createConnection, getManager } from "typeorm";
 import express, { Router } from "express";
+import expressWinston from "express-winston";
 import bodyParser from "body-parser";
 import fs from "fs-extra";
 import winston from "winston";
@@ -88,6 +89,14 @@ class App {
     this.router.use(express.static(path.join(__dirname, "../public")));
 
     const apiRouter = Router();
+    apiRouter.use(expressWinston.logger({
+      transports: this.logger.transports,
+      format:     this.logger.format
+    }));
+    apiRouter.use(expressWinston.errorLogger({
+      transports: this.logger.transports,
+      format:     this.logger.format
+    }));
     apiRouter.use("/", routers.publicRouter);
     apiRouter.use("/user", routers.userRouter);
     apiRouter.use("/note", routers.noteRouter);

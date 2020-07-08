@@ -607,7 +607,7 @@ chalk@^1.1.1:
     strip-ansi "^3.0.0"
     supports-color "^2.0.0"
 
-chalk@^2.0.0, chalk@^2.4.2:
+chalk@^2.0.0, chalk@^2.4.1, chalk@^2.4.2:
   version "2.4.2"
   resolved "https://registry.npm.taobao.org/chalk/download/chalk-2.4.2.tgz#cd42541677a54333cf541a49108c1432b44c9424"
   integrity sha1-zUJUFnelQzPPVBpJEIwUMrRMlCQ=
@@ -1249,6 +1249,14 @@ express-validator@^6.6.0:
   dependencies:
     lodash "^4.17.15"
     validator "^13.1.1"
+
+express-winston@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.npm.taobao.org/express-winston/download/express-winston-4.0.3.tgz#7160ddc6eb8efaa1bfc95a246124b05286096699"
+  integrity sha1-cWDdxuuO+qG/yVokYSSwUoYJZpk=
+  dependencies:
+    chalk "^2.4.1"
+    lodash "^4.17.15"
 
 express@^4.17.1:
   version "4.17.1"
