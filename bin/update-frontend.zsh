@@ -1,4 +1,7 @@
 #!/usr/bin/env zsh
+#
+# Update frontend of QNote to the latest version on git branch.
+#
 
 BACKEND_HOME="$(dirname $0)/.."
 BACKEND_HOME="$BACKEND_HOME:A"

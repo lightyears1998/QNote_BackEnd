@@ -1,4 +1,7 @@
 #!/usr/bin/env zsh
+#
+# Update backend of QNote to the latest version on git branch.
+#
 
 PM2_PROCESS_NAME=QNote
 
