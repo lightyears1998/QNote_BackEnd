@@ -1,7 +1,10 @@
 
- <h1 class="curproject-name"> QNote Backend </h1> 
+ <h1 class="curproject-name"> QNote </h1> 
  
 
+
+### 公共信息
+<p>这里是 QNote RESTful API 哒~</p>
 
 # 公共分类
 
@@ -35,15 +38,9 @@
             
 ### 返回数据
 
-<table>
-  <thead class="ant-table-thead">
-    <tr>
-      <th key=name>名称</th><th key=type>类型</th><th key=required>是否必须</th><th key=default>默认值</th><th key=desc>备注</th><th key=sub>其他信息</th>
-    </tr>
-  </thead><tbody className="ant-table-tbody"><tr key=0-0><td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> token</span></td><td key=1><span>string</span></td><td key=2>必须</td><td key=3></td><td key=4><span style="white-space: pre-wrap"></span></td><td key=5></td></tr>
-               </tbody>
-              </table>
-            
+```javascript
+true 或 false
+```
 ## 注册
 <a id=注册> </a>
 ### 基本信息
@@ -74,9 +71,15 @@
             
 ### 返回数据
 
-```javascript
-token
-```
+<table>
+  <thead class="ant-table-thead">
+    <tr>
+      <th key=name>名称</th><th key=type>类型</th><th key=required>是否必须</th><th key=default>默认值</th><th key=desc>备注</th><th key=sub>其他信息</th>
+    </tr>
+  </thead><tbody className="ant-table-tbody"><tr key=0-0><td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> token</span></td><td key=1><span>string</span></td><td key=2>必须</td><td key=3></td><td key=4><span style="white-space: pre-wrap">JWT Token</span></td><td key=5></td></tr>
+               </tbody>
+              </table>
+            
 ## 登录
 <a id=登录> </a>
 ### 基本信息
@@ -122,7 +125,7 @@ token
 <a id=个人主页获取信息> </a>
 ### 基本信息
 
-**Path：** /user/getMessage/:username
+**Path：** /user/getMessage
 
 **Method：** GET
 
@@ -130,11 +133,6 @@ token
 
 
 ### 请求参数
-**路径参数**
-
-| 参数名称 | 示例  | 备注  |
-| ------------ | ------------ | ------------ |
-| username |   |   |
 **Query**
 
 | 参数名称  |  是否必须 | 示例  | 备注  |
@@ -253,28 +251,43 @@ done
 <a id=添加任务> </a>
 ### 基本信息
 
-**Path：** /note/addTask/:username/:noteContent
+**Path：** /note/addTask
 
-**Method：** GET
+**Method：** POST
 
 **接口描述：**
 
 
 ### 请求参数
-**路径参数**
+**Headers**
 
-| 参数名称 | 示例  | 备注  |
-| ------------ | ------------ | ------------ |
-| username |   |   |
-| noteContent |   |   |
+| 参数名称  | 参数值  |  是否必须 | 示例  | 备注  |
+| ------------ | ------------ | ------------ | ------------ | ------------ |
+| Content-Type  |  application/json | 是  |   |   |
 **Query**
 
 | 参数名称  |  是否必须 | 示例  | 备注  |
 | ------------ | ------------ | ------------ | ------------ |
 | token | 是  |   |  JWT Token |
+**Body**
 
+<table>
+  <thead class="ant-table-thead">
+    <tr>
+      <th key=name>名称</th><th key=type>类型</th><th key=required>是否必须</th><th key=default>默认值</th><th key=desc>备注</th><th key=sub>其他信息</th>
+    </tr>
+  </thead><tbody className="ant-table-tbody"><tr key=0-0><td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> token</span></td><td key=1><span>string</span></td><td key=2>必须</td><td key=3></td><td key=4><span style="white-space: pre-wrap">JWT Token</span></td><td key=5></td></tr><tr key=0-1><td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> noteContent</span></td><td key=1><span>string</span></td><td key=2>必须</td><td key=3></td><td key=4><span style="white-space: pre-wrap">笔记内容</span></td><td key=5></td></tr>
+               </tbody>
+              </table>
+            
 ### 返回数据
 
-```javascript
-{"type":"object","title":"empty object","properties":{}}
-```
+<table>
+  <thead class="ant-table-thead">
+    <tr>
+      <th key=name>名称</th><th key=type>类型</th><th key=required>是否必须</th><th key=default>默认值</th><th key=desc>备注</th><th key=sub>其他信息</th>
+    </tr>
+  </thead><tbody className="ant-table-tbody"><tr key=0-0><td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> noteID</span></td><td key=1><span>number</span></td><td key=2>必须</td><td key=3></td><td key=4><span style="white-space: pre-wrap">笔记 ID</span></td><td key=5></td></tr>
+               </tbody>
+              </table>
+            
