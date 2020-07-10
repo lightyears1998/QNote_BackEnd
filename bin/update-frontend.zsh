@@ -24,6 +24,7 @@ echo "\n[env]"
 env
 
 echo "\n[update codebase]"
+git reset --hard
 git pull
 
 echo "\n[build]"

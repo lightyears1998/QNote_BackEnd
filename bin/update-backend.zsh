@@ -17,6 +17,7 @@ echo "\n[env]"
 env
 
 echo "\n[git pull]"
+git reset --hard
 git pull
 
 echo "\n[yarn install]"
