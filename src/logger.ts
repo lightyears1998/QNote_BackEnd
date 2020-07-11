@@ -6,17 +6,22 @@ export function createLogger(logPath: string): winston.Logger {
   return winston.createLogger({
     level:  "silly",
     format: winston.format.combine(
+      winston.format.json(),
       winston.format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss"
       }),
-      winston.format.json(),
-      winston.format.prettyPrint()
+      winston.format.errors({ stack: true }),
+      winston.format.prettyPrint(),
     ),
     transports: [
       new winston.transports.Console({
         format: winston.format.combine(
           winston.format.colorize({ all: true }),
-          winston.format.printf(info => `${info.timestamp} [${info.level}] ${info.message}`)
+          winston.format.printf(info => {
+            const usualInfo = `${info.timestamp} [${info.level}] ${info.message}`;
+            const errorStack = info.stack ? `\n${info.stack}` : "";
+            return usualInfo + errorStack;
+          })
         )
       }),
       new winston.transports.DailyRotateFile({

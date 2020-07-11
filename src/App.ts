@@ -143,7 +143,12 @@ class App {
       logger.error(err);
       logger.info("服务器启动失败。");
       await this.stop();
-      process.exit(1);
+
+      // set the `process.exitCode` rather than call `process.exit()`,
+      // which allows the process to exit naturally by avoiding scheduling any additional work for the event loop.
+      //
+      // @see <https://stackoverflow.com/a/37592669/8762529>
+      process.exitCode = 1;
     }
   }
 
