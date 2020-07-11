@@ -14,8 +14,8 @@
     "prebuild": "yarn clean",
     "build": "tsc",
     "build:tsdoc": "typedoc --out docs/tsdoc src",
-    "lint": "yarn lint:base src",
-    "lint:base": "eslint --ext .ts --fix",
+    "lint": "yarn linter src",
+    "linter": "eslint --ext .ts --fix",
     "postinstall": "yarn build"
   },
   "husky": {
@@ -24,7 +24,7 @@
     }
   },
   "lint-staged": {
-    "*.ts": "yarn lint:base"
+    "*.ts": "yarn linter"
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
