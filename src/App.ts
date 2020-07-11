@@ -12,6 +12,7 @@ import * as routers from "./router";
 import * as entities from "./entity";
 import { User, Note } from "./entity";
 import { createLogger } from "./logger";
+import { MottoController } from "./controller";
 
 
 class App {
@@ -21,8 +22,11 @@ class App {
 
   public logger: winston.Logger;
   private server: http.Server;
+  private apiRouter: express.Router;
   public router: express.Application;
   public db: Connection
+
+  private mottoController: MottoController;
 
   public constructor() {
     this.dataPath = path.resolve(__dirname, "../var/");
@@ -87,20 +91,26 @@ class App {
 
     this.router.use(express.static(path.join(__dirname, "../public")));
 
-    const apiRouter = Router();
-    apiRouter.use(expressWinston.logger({
+    this.apiRouter = Router();
+    this.apiRouter.use(expressWinston.logger({
       transports: this.logger.transports,
       format:     this.logger.format
     }));
-    apiRouter.use(expressWinston.errorLogger({
+    this.apiRouter.use(expressWinston.errorLogger({
       transports: this.logger.transports,
       format:     this.logger.format
     }));
-    apiRouter.use("/", routers.publicRouter);
-    apiRouter.use("/user", routers.userRouter);
-    apiRouter.use("/note", routers.noteRouter);
+    this.apiRouter.use("/", routers.publicRouter);
+    this.apiRouter.use("/user", routers.userRouter);
+    this.apiRouter.use("/note", routers.noteRouter);
 
-    this.router.use("/api", apiRouter);
+    this.router.use("/api", this.apiRouter);
+  }
+
+  private setupControllers(): void {
+    this.mottoController = new MottoController();
+    this.mottoController.init();
+    this.apiRouter.use("/motto", this.mottoController.getRouter());
   }
 
   private async setupServer() {
@@ -125,6 +135,7 @@ class App {
 
       await this.establishDatabaseConnection();
       this.setupRouter();
+      this.setupControllers();
       await this.setupServer();
 
       logger.info("服务器启动成功。");
