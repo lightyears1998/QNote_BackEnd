@@ -132,27 +132,29 @@ class App {
       logger.info("服务器启动成功。");
     } catch {
       logger.info("服务器启动失败。");
-      this.stop();
+      await this.stop();
       process.exit(1);
     }
   }
 
-  public stop() {
+  public async stop() {
     if (this.db && this.db.isConnected) {
-      this.db.close();
+      await this.db.close();
       logger.info("数据库连接关闭。");
     }
     if (this.server && this.server.listening) {
-      this.server.close();
+      await new Promise((resolve) => {
+        this.server.close(() => resolve());
+      });
       logger.info("停止监听 HTTP 端口。");
     }
-    logger.info("服务器程序退出。");
   }
 }
 
 
 process.on("exit", () => {
   app.stop();
+  logger.info("服务器程序退出。");
 });
 
 
