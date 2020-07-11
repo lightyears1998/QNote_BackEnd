@@ -65,7 +65,6 @@ class App {
       logger.info("连接数据库成功。");
       logger.info(`现有 ${userCount} 名用户，${noteCount} 条笔记。`);
     } catch (err) {
-      logger.info(err);
       logger.error("连接数据库失败。");
       throw err;
     }
@@ -115,7 +114,6 @@ class App {
       });
       logger.info("监听 HTTP 端口成功。");
     } catch (err) {
-      logger.info(err);
       logger.error("监听 HTTP 端口失败。");
       throw err;
     }
@@ -130,7 +128,8 @@ class App {
       await this.setupServer();
 
       logger.info("服务器启动成功。");
-    } catch {
+    } catch (err) {
+      logger.error(err);
       logger.info("服务器启动失败。");
       await this.stop();
       process.exit(1);
