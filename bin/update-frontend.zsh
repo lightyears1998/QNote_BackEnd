@@ -14,13 +14,14 @@ if [[ $UID == 0 || $EUID == 0 ]]; then
 
     echo "Try to run as $USER."
 
-    id -u $USER
+    id -u $USER >/dev/null 2>&1
     if [[ $? == 1 ]]; then
         echo "Fail to run this script as $USER, because that user $USER doesn't exist."
         exit 1
     fi
 
-    sudo -u $USER $0
+    sudo -u $USER -H $0
+    exit $?
 fi
 
 BACKEND_HOME="$(dirname $0)/.."
