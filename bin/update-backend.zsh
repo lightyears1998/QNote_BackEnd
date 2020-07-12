@@ -8,7 +8,7 @@ PM2_PROCESS_NAME=QNote
 cd "$(dirname $0)/.."
 echo "Working directory: $PWD"
 
-if [[ "$PWD"  = '/' ]] then
+if [[ "$PWD" = '/' ]] then
     echo "Working in root directory is not allowed."
     exit 1;
 fi

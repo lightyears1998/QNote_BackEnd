@@ -12,7 +12,7 @@ FRONTEND_HOME="$FRONTEND_HOME:A"
 echo "Backend Home: $BACKEND_HOME"
 echo "Frontend Home: $FRONTEND_HOME"
 
-if [[ "$BACKEND_HOME"  = '/' ]] || [[ "$FRONTEND_HOME"  = '/' ]] then
+if [[ "$BACKEND_HOME" = '/' ]] || [[ "$FRONTEND_HOME" = '/' ]] then
     echo "Working in root directory is not allowed."
     exit 1;
 fi

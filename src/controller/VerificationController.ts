@@ -11,7 +11,7 @@ import { Mail, StaticController } from "./base";
  */
 class VerificationMail extends Mail {
   public readonly to: string;
-  public readonly subject = "轻笔记 QNote 注册验证"
+  public readonly subject = "轻笔记 QNote 注册验证邮件"
   public readonly htmlBody: string;
 
   private buildBody(code: string) {
