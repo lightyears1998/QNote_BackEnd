@@ -12,6 +12,18 @@ cd server
 yarn install --frozen-lockfile
 ```
 
+QNote 使用 `.env` 文件保存环境变量。
+
+``` conf
+# Mailing
+MAIL_ENABLE=true
+MAIL_HOST=smtp.hosting.bareheaded.composer
+MAIL_PORT=465
+MAIL_FROM=from@bareheaded.composer
+MAIL_USERNAME=notifier@bareheaded.composer
+MAIL_PASSWORD=pa$$w0rd
+```
+
 ## 运行
 
 ``` shell

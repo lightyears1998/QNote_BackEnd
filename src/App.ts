@@ -7,12 +7,13 @@ import express, { Router } from "express";
 import expressWinston from "express-winston";
 import bodyParser from "body-parser";
 import fs from "fs-extra";
+import { config as loadEnvironmentVariables } from "dotenv";
 import winston from "winston";
 import * as routers from "./router";
 import * as entities from "./entity";
 import { User, Note } from "./entity";
 import { createLogger } from "./logger";
-import { MottoController } from "./controller";
+import { MottoController, MailingController } from "./controller";
 
 
 class App {
@@ -27,8 +28,11 @@ class App {
   public db: Connection
 
   private mottoController: MottoController;
+  private maillingController: MailingController;
 
   public constructor() {
+    loadEnvironmentVariables();
+
     this.dataPath = path.resolve(__dirname, "../var/");
     this.logPath = path.resolve(this.dataPath, "./log");
 
@@ -111,6 +115,9 @@ class App {
     this.mottoController = new MottoController();
     this.mottoController.init();
     this.apiRouter.use("/motto", this.mottoController.getRouter());
+
+    this.maillingController = new MailingController();
+    this.maillingController.init();
   }
 
   private async setupServer() {
