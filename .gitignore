@@ -5,6 +5,7 @@
 node_modules
 
 # Project
+.env
 docs/tsdoc
 lib
 public
