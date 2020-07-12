@@ -2,7 +2,7 @@ import { Entity, ObjectIdColumn, ObjectID, Column, Unique } from "typeorm";
 
 
 @Entity({ name: "notes" })
-@Unique(["username", "noteID"])
+@Unique("unique noteID under the same username", ["username", "noteID"])
 export class Note {
   @ObjectIdColumn()
   id: ObjectID
