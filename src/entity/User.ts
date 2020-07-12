@@ -2,7 +2,7 @@ import { Entity, ObjectIdColumn, Column, Unique } from "typeorm";
 import { ObjectID } from "mongodb";
 
 
-@Entity({ name: "users" })
+@Entity()
 @Unique("unique username", ["username"])
 @Unique("unique email", ["email"])
 @Unique("unique displayEmail", ["displayEmail"])

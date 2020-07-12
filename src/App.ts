@@ -13,7 +13,7 @@ import * as routers from "./router";
 import * as entities from "./entity";
 import { User, Note } from "./entity";
 import { createLogger } from "./logger";
-import { MottoController, MailingController } from "./controller";
+import { mottoController, mailingController, Mail } from "./controller";
 
 
 class App {
@@ -26,9 +26,6 @@ class App {
   private apiRouter: express.Router;
   public router: express.Application;
   public db: Connection
-
-  private mottoController: MottoController;
-  private maillingController: MailingController;
 
   public constructor() {
     loadEnvironmentVariables();
@@ -53,6 +50,10 @@ class App {
     } catch {
       return "unknown";
     }
+  }
+
+  public async sendMail(mail: Mail) {
+    await mailingController.sendMail(mail.to, mail.subject, mail.htmlBody);
   }
 
   private async establishDatabaseConnection() {
@@ -112,12 +113,10 @@ class App {
   }
 
   private setupControllers(): void {
-    this.mottoController = new MottoController();
-    this.mottoController.init();
-    this.apiRouter.use("/motto", this.mottoController.getRouter());
+    mottoController.init();
+    this.apiRouter.use("/motto", mottoController.getRouter());
 
-    this.maillingController = new MailingController();
-    this.maillingController.init();
+    mailingController.init();
   }
 
   private async setupServer() {

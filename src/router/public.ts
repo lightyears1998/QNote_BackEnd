@@ -6,6 +6,7 @@ import * as HTTP_STATUS from "http-status-codes";
 import { JsonObject } from "type-fest";
 import { User } from "../entity";
 import { logger } from "..";
+import { verificationController } from "../controller";
 import { generateUserToken } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
@@ -64,6 +65,20 @@ publicRouter.post("/registerName", [
 });
 
 
+publicRouter.post("/sendEmail", [
+  body("email").notEmpty().isEmail()
+], async (req: Request, res: Response<JsonObject>) => {
+  const email = String(req.body.email);
+  try {
+    await verificationController.prepareVerificationCode(email);
+    res.status(HTTP_STATUS.OK).json({ valid: true });
+  } catch (err) {
+    logger.error(err);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ valid: false });
+  }
+});
+
+
 publicRouter.post("/checkEmail", [
   body("email").notEmpty().isEmail(),
   ArgumentValidationResultHandler
@@ -85,21 +100,24 @@ publicRouter.post("/register", [
   body("password").notEmpty().isString(),
   body("verification").notEmpty().isString(),
   ArgumentValidationResultHandler
-], async (req: Request, res: Response<string | JsonObject>) => {
+], async (req: Request, res: Response<JsonObject>) => {
   const db = getManager();
   const displayEmail = String(req.body.email);
   const email = displayEmail.toLowerCase();
   const username = String(req.body.username);
   const password = String(req.body.password);
-  const verification = String(req.body.verification);
+  const verification = String(req.body.verification).toUpperCase();
 
   if ((await db.count(User, { username }) + (await db.count(User, { email }))) > 0) {
-    res.status(HTTP_STATUS.CONFLICT).send("用户名或邮箱地址已被占用");
+    res.status(HTTP_STATUS.CONFLICT).send({ msg: "用户名或邮箱地址已被占用。", valid: false });
     return;
   }
 
-  if (verification) {
-    // do verificaion here
+  const verified = await verificationController.verifyVerificationCode(email, verification);
+
+  if (!verified) {
+    res.status(HTTP_STATUS.UNAUTHORIZED).json({ msg: "验证码错误。", valid: false });
+    return;
   }
 
   try {

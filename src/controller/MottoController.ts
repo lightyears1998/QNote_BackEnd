@@ -34,3 +34,6 @@ export class MottoController extends StaticController {
     };
   }
 }
+
+
+export const mottoController = new MottoController();

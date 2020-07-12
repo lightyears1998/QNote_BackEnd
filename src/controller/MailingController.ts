@@ -32,9 +32,13 @@ export class MailingController extends StaticController {
         subject: subject,
         html:    htmlBody
       });
-      logger.info(`邮件已发送，详情：${info}`);
+      logger.info("邮件已发送。");
+      logger.verbose(info);
     } catch (err) {
       logger.error(err);
     }
   }
 }
+
+
+export const mailingController = new MailingController();
