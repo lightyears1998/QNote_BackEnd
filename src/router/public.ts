@@ -17,25 +17,33 @@ const publicRouter = express.Router();
 
 
 publicRouter.post("/signin", [
-  body("username").notEmpty(),
-  body("password").notEmpty(),
+  body("email").notEmpty().isEmail(),
+  body("password").notEmpty().isString(),
   ArgumentValidationResultHandler
 ], async (req: Request, res: Response<string | JsonObject>) => {
   const db = getManager();
-  const { username, password } = req.body;
+  const email = String(req.body.email).toLowerCase();
+  const password = String(req.body.password);
+
+  const user = await db.findOne(User, { email: email });
+
+  if (!user) {
+    res.status(HTTP_STATUS.NOT_FOUND).send("邮箱地址对应的用户不存在。");
+    return;
+  }
 
   try {
-    const user = await db.findOneOrFail(User, { username: username });
-
-    if (bcrypt.compareSync(password, user.password)) {
-      const token = generateUserToken(user);
-      res.status(HTTP_STATUS.OK).send({ token });
-    } else {
-      throw `${username} 用户的密码错误，拒绝登录。`;
+    const passwordMatched = await bcrypt.compare(password, user.password);
+    if (!passwordMatched) {
+      res.status(HTTP_STATUS.UNAUTHORIZED).send("密码错误。");
+      return;
     }
+
+    const token = generateUserToken(user);
+    res.status(HTTP_STATUS.OK).send({ token });
   } catch (err) {
-    logger.info(err);
-    res.status(HTTP_STATUS.UNAUTHORIZED).send("账号不存在或密码错误");
+    logger.error(err);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send();
   }
 });
 
@@ -56,27 +64,58 @@ publicRouter.post("/registerName", [
 });
 
 
+publicRouter.post("/checkEmail", [
+  body("email").notEmpty().isEmail(),
+  ArgumentValidationResultHandler
+], async (req: Request, res: Response<JsonObject>) => {
+  const db = getManager();
+  const email = String(req.body.email).toLowerCase();
+
+  if ((await db.count(User, { email: email })) === 0) {
+    res.status(HTTP_STATUS.OK).json({ valid: true });
+  } else {
+    res.status(HTTP_STATUS.OK).json({ valid: false });
+  }
+});
+
+
 publicRouter.post("/register", [
-  body("username").notEmpty(),
-  body("password").notEmpty(),
+  body("email").notEmpty().isString(),
+  body("username").notEmpty().isString(),
+  body("password").notEmpty().isString(),
+  body("verification").notEmpty().isString(),
   ArgumentValidationResultHandler
 ], async (req: Request, res: Response<string | JsonObject>) => {
   const db = getManager();
-  const { username, password, confirmPassword } = req.body;
+  const displayEmail = String(req.body.email);
+  const email = displayEmail.toLowerCase();
+  const username = String(req.body.username);
+  const password = String(req.body.password);
+  const verification = String(req.body.verification);
 
-  if (confirmPassword && password !== confirmPassword) {
-    res.status(HTTP_STATUS.CONFLICT).send("两次输入的密码不一致");
+  if ((await db.count(User, { username }) + (await db.count(User, { email }))) > 0) {
+    res.status(HTTP_STATUS.CONFLICT).send("用户名或邮箱地址已被占用");
     return;
   }
 
-  if ((await db.count(User, { username })) > 0) {
-    res.status(HTTP_STATUS.CONFLICT).send("用户名已被占用");
-    return;
+  if (verification) {
+    // do verificaion here
   }
 
-  const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
-  const user = await db.save(new User(username, hashedPassword));
-  res.status(HTTP_STATUS.OK).send({ token: generateUserToken(user) });
+  try {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = new User(username, hashedPassword);
+    user.displayEmail = displayEmail;
+    user.email = email;
+    await db.save(user);
+
+    res.status(HTTP_STATUS.OK).send({ token: generateUserToken(user), valid: true });
+  } catch (err) {
+    logger.error(err);
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send();
+  }
 });
 
 
