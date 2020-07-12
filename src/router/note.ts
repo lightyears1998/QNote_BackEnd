@@ -20,11 +20,13 @@ noteRouter.use(UserTokenHanler);
 
 noteRouter.post("/addTask", [
   body("noteContent").isString().notEmpty(),
+  body("noteRemark").isString(),
   ArgumentValidationResultHandler
 ], async (req: Request, res: Response<JsonObject>) => {
   const db = getMongoManager();
-  const { noteContent } = req.body;
   const { userID, username } = getCurrentUser(res);
+  const noteContent = String(req.body.noteContent);
+  const noteRemark = req.body.noteRemark ? String(req.body.noteRemark) : "";
 
   try {
     const user = await db.findOneOrFail(User, userID);
@@ -33,6 +35,7 @@ noteRouter.post("/addTask", [
     note.username = username;
     note.noteID = user.noteNum + 1;
     note.noteContent = noteContent;
+    note.noteRemark = noteRemark;
     note = await db.save(note);
 
     user.noteNum += 1;
