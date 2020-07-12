@@ -48,4 +48,10 @@ export class User {
     this.username = username;
     this.password = password;
   }
+
+  public desensitization(): void {
+    delete this.password;
+    this.email = this.displayEmail;
+    delete this.displayEmail;
+  }
 }

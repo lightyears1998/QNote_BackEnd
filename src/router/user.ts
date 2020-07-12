@@ -19,6 +19,8 @@ userRouter.get("/getMessage", async (req: Request, res: Response<unknown>) => {
   try {
     const note = await db.find(Note, { username: username });
     const user = await db.findOneOrFail(User, { username: username });
+    user.desensitization();
+
     const info = { user, note };
     res.status(HTTP_STATUS.OK).json(info);
   } catch (err) {
