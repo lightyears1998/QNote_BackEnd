@@ -28,14 +28,14 @@ export function createLogger(logPath: string): winston.Logger {
       new winston.transports.DailyRotateFile({
         filename:  `${logPath}/qnote-%DATE%-combined.log`,
         auditFile: `${logPath}/qnote-combined-audit.json`,
-        maxFiles:  "14d",
+        maxFiles:  "32d",
         maxSize:   "32mb"
       }),
       new winston.transports.DailyRotateFile({
         filename:  `${logPath}/qnote-%DATE%-error.log`,
         auditFile: `${logPath}/qnote-error-audit.json`,
         level:     "error",
-        maxFiles:  "14d",
+        maxFiles:  "32d",
         maxSize:   "32mb"
       })
     ]
