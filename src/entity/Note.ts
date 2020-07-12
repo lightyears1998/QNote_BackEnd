@@ -17,5 +17,8 @@ export class Note {
   noteContent: string
 
   @Column()
+  noteRemark: string
+
+  @Column()
   done = false
 }
