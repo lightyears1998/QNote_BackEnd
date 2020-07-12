@@ -13,7 +13,7 @@ import * as routers from "./router";
 import * as entities from "./entity";
 import { User, Note } from "./entity";
 import { createLogger } from "./logger";
-import { mottoController, mailingController, Mail } from "./controller";
+import { mottoController, mailingController, Mail, verificationController } from "./controller";
 
 
 class App {
@@ -117,6 +117,7 @@ class App {
     this.apiRouter.use("/motto", mottoController.getRouter());
 
     mailingController.init();
+    verificationController.init();
   }
 
   private async setupServer() {
@@ -147,7 +148,7 @@ class App {
       logger.info("服务器启动成功。");
     } catch (err) {
       logger.error(err);
-      logger.info("服务器启动失败。");
+      logger.error("服务器启动失败。");
       await this.stop();
 
       // set the `process.exitCode` rather than call `process.exit()`,

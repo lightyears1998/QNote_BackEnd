@@ -15,6 +15,9 @@ yarn install --frozen-lockfile
 QNote 使用 `.env` 文件保存环境变量。
 
 ``` conf
+# Motto
+MOTTO_ENABLE=false
+
 # Mailing
 MAIL_ENABLE=true
 MAIL_HOST=smtp.hosting.bareheaded.composer

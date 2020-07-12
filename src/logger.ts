@@ -4,8 +4,9 @@ import "winston-daily-rotate-file";
 
 export function createLogger(logPath: string): winston.Logger {
   return winston.createLogger({
-    level:  "silly",
-    format: winston.format.combine(
+    exitOnError: false,
+    level:       "silly",
+    format:      winston.format.combine(
       winston.format.json(),
       winston.format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss"
@@ -18,9 +19,9 @@ export function createLogger(logPath: string): winston.Logger {
         format: winston.format.combine(
           winston.format.colorize({ all: true }),
           winston.format.printf(info => {
-            const usualInfo = `${info.timestamp} [${info.level}] ${info.message}`;
+            const label = info.label ? ` [${info.label}]` : "";
             const errorStack = info.stack ? `\n${info.stack}` : "";
-            return usualInfo + errorStack;
+            return `${info.timestamp}` + label + ` ${info.level}: ${info.message}` + errorStack;
           })
         )
       }),
