@@ -1,3 +1,6 @@
 {
-  "ignore": ["var/*"]
+  "ignore": [
+    "lib/*",
+    "var/*"
+  ]
 }
