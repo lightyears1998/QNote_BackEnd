@@ -13,7 +13,13 @@ import * as routers from "./router";
 import * as entities from "./entity";
 import { User, Note } from "./entity";
 import { createLogger } from "./logger";
-import { mottoController, mailingController, Mail, verificationController } from "./controller";
+import {
+  Mail,
+  mottoController,
+  mailingController,
+  emailVerificationController,
+  scheduler
+} from "./controller";
 
 
 class App {
@@ -117,11 +123,21 @@ class App {
   }
 
   private setupControllers(): void {
+    scheduler.init();
+
     mottoController.init();
     this.apiRouter.use("/motto", mottoController.getRouter());
 
     mailingController.init();
-    verificationController.init();
+    emailVerificationController.init();
+  }
+
+  private startStatefulControllers(): void {
+    scheduler.start();
+  }
+
+  private stopStatefulControllers(): void {
+    scheduler.stop();
   }
 
   private async setupServer() {
@@ -147,6 +163,7 @@ class App {
       await this.establishDatabaseConnection();
       this.setupRouter();
       this.setupControllers();
+      this.startStatefulControllers();
       await this.setupServer();
 
       logger.info("服务器启动成功。", { label: "App" });
@@ -164,16 +181,14 @@ class App {
   }
 
   public async stop() {
-    if (this.db && this.db.isConnected) {
-      await this.db.close();
-      logger.info("数据库连接关闭。");
-    }
     if (this.server && this.server.listening) {
       await new Promise((resolve) => {
         this.server.close(() => resolve());
       });
       logger.info("停止监听 HTTP 端口。", { label: "HTTP" });
     }
+
+    this.stopStatefulControllers();
 
     if (this.db && this.db.isConnected) {
       await this.db.close();

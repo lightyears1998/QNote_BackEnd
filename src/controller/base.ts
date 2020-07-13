@@ -3,6 +3,13 @@ export abstract class StaticController {
 }
 
 
+export abstract class StatefulController {
+  public abstract init(): void
+  public abstract start(): void
+  public abstract stop(): void
+}
+
+
 export class Mail {
   public readonly to: string;
   public readonly subject: string;
