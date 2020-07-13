@@ -1,7 +1,7 @@
 {
   "name": "qnote-backend",
-  "version": "0.1.0",
-  "description": "QNote 网站后端 | Backend for QNote",
+  "version": "0.1.1",
+  "description": "Backend for QNote | 轻笔记 QNote 网站后端",
   "main": "src/index.js",
   "repository": "https://github.com/YongXun/QNote_BackEnd.git",
   "author": "QNote Team",
