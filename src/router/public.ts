@@ -6,7 +6,7 @@ import * as HTTP_STATUS from "http-status-codes";
 import { JsonObject } from "type-fest";
 import { User } from "../entity";
 import { logger } from "..";
-import { verificationController } from "../controller";
+import { emailVerificationController } from "../controller";
 import { generateUserToken } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
@@ -70,7 +70,7 @@ publicRouter.post("/sendEmail", [
 ], async (req: Request, res: Response<JsonObject>) => {
   const email = String(req.body.email);
   try {
-    await verificationController.prepareVerificationCode(email);
+    await emailVerificationController.prepareVerificationCode(email);
     res.status(HTTP_STATUS.OK).json({ valid: true });
   } catch (err) {
     logger.error(err);
@@ -113,7 +113,7 @@ publicRouter.post("/register", [
     return;
   }
 
-  const verified = await verificationController.verifyVerificationCode(email, verification);
+  const verified = await emailVerificationController.verifyVerificationCode(email, verification);
 
   if (!verified) {
     res.status(HTTP_STATUS.UNAUTHORIZED).json({ msg: "验证码错误。", valid: false });

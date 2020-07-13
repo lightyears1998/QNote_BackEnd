@@ -1,9 +1,8 @@
 import randomstring from "randomstring";
 import { getManager } from "typeorm";
 import { EmailVerificationCode } from "../entity";
-import { app } from "..";
+import { app, logger } from "..";
 import { Mail, StaticController } from "./base";
-
 
 
 /**
@@ -28,7 +27,7 @@ class VerificationMail extends Mail {
 }
 
 
-export class VerificationController extends StaticController {
+export class EmailVerificationController extends StaticController {
   /**
    * Default to 24 hours valid span.
    */
@@ -69,7 +68,34 @@ export class VerificationController extends StaticController {
 
     return ok;
   }
+
+  public async recycleVerificationCodes(): Promise<void> {
+    const profiler = logger.startTimer();
+    const db = getManager();
+
+    const now = new Date();
+    const expiredCodes = await db.find(EmailVerificationCode, {
+      where: {
+        validUntil: { $lt: now }
+      }
+    });
+
+    let recycledCount = 0;
+    for (const expiredCode of expiredCodes) {
+      try {
+        await db.remove(expiredCode);
+      } catch {
+        continue;
+      }
+      recycledCount++;
+    }
+
+    profiler.done({
+      label:   EmailVerificationController.name,
+      message: `已清理 ${recycledCount} 条过期验证码。`
+    });
+  }
 }
 
 
-export const verificationController = new VerificationController();
+export const emailVerificationController = new EmailVerificationController();

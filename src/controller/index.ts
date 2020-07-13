@@ -2,4 +2,5 @@ export * from "./base";
 
 export * from "./MottoController";
 export * from "./MailingController";
-export * from "./VerificationController";
+export * from "./EmailVerificationController";
+export * from "./CaptchaController";
