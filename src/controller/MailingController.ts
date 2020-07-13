@@ -7,7 +7,7 @@ export class MailingController extends StaticController {
   private transporter: nodemailer.Transporter
 
   public init(): void {
-    if (Boolean(process.env.MAIL_ENABLE)) {
+    if (String(process.env.MAIL_ENABLE).toLowerCase() === "true") {
       this.transporter = nodemailer.createTransport({
         host:   process.env.MAIL_HOST,
         port:   Number(process.env.MAIL_PORT),
