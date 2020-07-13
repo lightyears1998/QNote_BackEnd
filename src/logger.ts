@@ -20,8 +20,9 @@ export function createLogger(logPath: string): winston.Logger {
           winston.format.colorize({ all: true }),
           winston.format.printf(info => {
             const label = info.label ? ` [${info.label}]` : "";
+            const durationMs = info.durationMs ? ` (${info.durationMs} ms)` : "";
             const errorStack = info.stack ? `\n${info.stack}` : "";
-            return `${info.timestamp}` + label + ` ${info.level}: ${info.message}` + errorStack;
+            return `${info.timestamp}` + ` ${info.level}:` + label + durationMs + ` ${info.message}` + errorStack;
           })
         )
       }),
