@@ -42,3 +42,14 @@ export function createLogger(logPath: string): winston.Logger {
     ]
   });
 }
+
+
+export function attachLabelToLogger(logger: winston.Logger, label: string): winston.Logger {
+  const neoLogger = Object.create(logger, {
+    defaultMeta: {
+      value:    { label },
+      writable: true
+    }
+  });
+  return neoLogger as winston.Logger;
+}

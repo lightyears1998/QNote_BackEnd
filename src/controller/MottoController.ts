@@ -1,10 +1,12 @@
 import path from "path";
 import { assert } from "console";
+import { Logger } from "winston";
 import fs from "fs-extra";
 import { Handler, Request, Response } from "express";
 import { JsonObject } from "type-fest";
 import * as HTTP_STATUS from "http-status-codes";
-import { app, logger } from "..";
+import { app, logger as defaultLogger } from "..";
+import { attachLabelToLogger } from "../logger";
 import { StaticController } from "./base";
 
 
@@ -48,6 +50,8 @@ interface Motto {
  * [bundle]: https://github.com/hitokoto-osc/sentences-bundle
  */
 export class MottoController extends StaticController {
+  private logger: Logger;
+
   private categroies: Array<MottoCategory> = [];
   private sentences: Map<string, Array<Motto>> = new Map();
   private overallSentencesCount = 0;
@@ -57,14 +61,16 @@ export class MottoController extends StaticController {
       return;
     }
 
+    this.logger = attachLabelToLogger(defaultLogger, "每日一言");
+
     const mottoDataPath = path.resolve(app.dataPath, "./motto");
     const versionFilePath = path.resolve(mottoDataPath, "./version.json");
 
     const versionData = JSON.parse(fs.readFileSync(versionFilePath, { encoding: "utf-8" })) as MottoVersionData;
     assert(versionData.protocol_version === "1.0.0", "Protocol version must be 1.0.0!");
 
-    logger.info(`每日一言语句库版本：${versionData.bundle_version}`);
-    logger.info(`每日一言语句库更新时间：${new Date(versionData.updated_at).toLocaleString()}`);
+    this.logger.info(`语句库版本：${versionData.bundle_version}`);
+    this.logger.info(`语句库更新时间：${new Date(versionData.updated_at).toLocaleString()}`);
 
     versionData.sentences.forEach(category => {
       const sentencesPath = path.resolve(mottoDataPath, category.path);

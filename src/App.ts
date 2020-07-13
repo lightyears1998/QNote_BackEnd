@@ -61,6 +61,8 @@ class App {
       this.db = await createConnection({
         type:               "mongodb",
         url:                "mongodb://localhost/qnote",
+        loggerLevel:        "debug",
+        logging:            String(process.env.DB_DEBUG).toLowerCase() === "true",
         logger:             "advanced-console",
         entities:           Object.values(entities),
         synchronize:        true,
@@ -71,10 +73,10 @@ class App {
       const userCount = await getManager().count(User);
       const noteCount = await getManager().count(Note);
 
-      logger.info("连接数据库成功。");
-      logger.info(`现有 ${userCount} 名用户，${noteCount} 条笔记。`);
+      logger.info("连接数据库成功。", { label: "数据库" });
+      logger.info(`现有 ${userCount} 名用户，${noteCount} 条笔记。`, { label: "数据库" });
     } catch (err) {
-      logger.error("连接数据库失败。");
+      logger.error("连接数据库失败。", { label: "数据库" });
       throw err;
     }
   }
@@ -131,9 +133,9 @@ class App {
         this.server.on("listening", () => resolve());
         this.server.on("error", err => reject(err));
       });
-      logger.info("监听 HTTP 端口成功。");
+      logger.info("监听 HTTP 端口成功。", { label: "HTTP" });
     } catch (err) {
-      logger.error("监听 HTTP 端口失败。");
+      logger.error("监听 HTTP 端口失败。", { label: "HTTP" });
       throw err;
     }
   }
@@ -147,10 +149,10 @@ class App {
       this.setupControllers();
       await this.setupServer();
 
-      logger.info("服务器启动成功。");
+      logger.info("服务器启动成功。", { label: "App" });
     } catch (err) {
       logger.error(err);
-      logger.error("服务器启动失败。");
+      logger.error("服务器启动失败。", { label: "App" });
       await this.stop();
 
       // set the `process.exitCode` rather than call `process.exit()`,
@@ -170,7 +172,12 @@ class App {
       await new Promise((resolve) => {
         this.server.close(() => resolve());
       });
-      logger.info("停止监听 HTTP 端口。");
+      logger.info("停止监听 HTTP 端口。", { label: "HTTP" });
+    }
+
+    if (this.db && this.db.isConnected) {
+      await this.db.close();
+      logger.info("数据库连接关闭。", { label: "数据库" });
     }
   }
 }
@@ -178,7 +185,7 @@ class App {
 
 process.on("exit", () => {
   app.stop();
-  logger.info("服务器程序退出。");
+  logger.info("服务器程序退出。", { label: "App" });
 });
 
 
