@@ -1,5 +1,7 @@
 # QNote Backend
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/1a5387c0ce48116489b5/maintainability)](https://codeclimate.com/github/lightyears1998/qnote-backend/maintainability)
+
 QNote 后端。
 
 ## 安装和配置
