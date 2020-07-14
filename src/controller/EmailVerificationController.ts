@@ -1,8 +1,8 @@
 import randomstring from "randomstring";
 import { getManager } from "typeorm";
-import { EmailVerificationCode } from "../entity";
+import { EmailVerificationCode, Mail } from "../entity";
 import { app, logger } from "..";
-import { Mail, StaticController } from "./base";
+import { StaticController } from "./base";
 
 
 /**

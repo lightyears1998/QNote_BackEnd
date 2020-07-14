@@ -11,7 +11,7 @@ import { config as loadEnvironmentVariables } from "dotenv";
 import winston from "winston";
 import * as routers from "./router";
 import * as entities from "./entity";
-import { User, Note } from "./entity";
+import { User, Note, Mail } from "./entity";
 import { createLogger } from "./logger";
 import {
   Mail,
