@@ -31,3 +31,8 @@ jobs:
 
     - name: Build program docs
       run: yarn build:tsdoc
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: tsdoc
+        path: docs/tsdoc/
