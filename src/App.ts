@@ -104,9 +104,7 @@ class App {
     this.router.use(compression());
     this.router.use(routers.CorsHandler);
 
-    this.router.use(express.static(path.join(__dirname, "../public"), {
-      maxAge: "30 days"
-    }));
+    this.router.use(express.static(path.join(__dirname, "../public")));
 
     this.apiRouter = Router();
     this.apiRouter.use(expressWinston.logger({
