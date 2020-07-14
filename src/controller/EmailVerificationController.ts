@@ -28,10 +28,8 @@ class VerificationMail extends Mail {
 
 
 export class EmailVerificationController extends StaticController {
-  /**
-   * Default to 24 hours valid span.
-   */
-  private validSpanInMilliseconds = 1000 * 60 * 60 * 24;
+  /** 24 hours */
+  private millisecondsToExpire = 1000 * 60 * 60 * 24;
 
   public init(): void {
     return;
@@ -45,7 +43,7 @@ export class EmailVerificationController extends StaticController {
     const emailVerificationCode = new EmailVerificationCode();
     emailVerificationCode.code = code;
     emailVerificationCode.email = email.toLowerCase();
-    emailVerificationCode.validUntil = new Date(new Date().getTime() + this.validSpanInMilliseconds);
+    emailVerificationCode.validUntil = new Date(new Date().getTime() + this.millisecondsToExpire);
 
     await db.save(emailVerificationCode);
     await app.sendMail(mail);

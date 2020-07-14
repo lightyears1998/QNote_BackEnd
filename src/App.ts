@@ -14,10 +14,10 @@ import * as entities from "./entity";
 import { User, Note, Mail } from "./entity";
 import { createLogger } from "./logger";
 import {
-  Mail,
   mottoController,
   mailingController,
   emailVerificationController,
+  captchaController,
   scheduler
 } from "./controller";
 
@@ -130,6 +130,7 @@ class App {
 
     mailingController.init();
     emailVerificationController.init();
+    captchaController.init();
   }
 
   private startStatefulControllers(): void {
