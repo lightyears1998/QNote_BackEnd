@@ -4,6 +4,7 @@ import http from "http";
 import { v4 as uuidv4 } from "uuid";
 import { Connection, createConnection, getManager } from "typeorm";
 import express, { Router } from "express";
+import compression from "compression";
 import expressWinston from "express-winston";
 import bodyParser from "body-parser";
 import fs from "fs-extra";
@@ -100,6 +101,7 @@ class App {
     this.router.use(bodyParser.json());
     this.router.use(bodyParser.urlencoded({ extended: true }));
 
+    this.router.use(compression());
     this.router.use(routers.CorsHandler);
 
     this.router.use(express.static(path.join(__dirname, "../public"), {
