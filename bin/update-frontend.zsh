@@ -1,58 +1,37 @@
 #!/usr/bin/env zsh
 #
-# Update frontend of QNote to the latest version on git branch.
+# Update frontend of QNote to the latest version on git tracking remote branch.
 #
 
-USER=qnote
 
-if [[ $UID == 0 || $EUID == 0 ]]; then
-    echo "Running this script as root is not allowed."
+SCRIPT_PATH=${0:a}
+source ${0:a:h}/_setup.zsh
 
-    if [[ $USER == "root" ]]; then
-        exit 1
-    fi
-
-    echo "Try to run as $USER."
-
-    id -u $USER >/dev/null 2>&1
-    if [[ $? == 1 ]]; then
-        echo "Fail to run this script as $USER, because that user $USER doesn't exist."
-        exit 1
-    fi
-
-    sudo -u $USER -H $0
-    exit $?
-fi
-
-BACKEND_HOME="$(dirname $0)/.."
-BACKEND_HOME="$BACKEND_HOME:A"
-
-FRONTEND_HOME="$BACKEND_HOME/../qnote"
-FRONTEND_HOME="$FRONTEND_HOME:A"
-
-echo "Backend Home: $BACKEND_HOME"
-echo "Frontend Home: $FRONTEND_HOME"
-
-if [[ "$BACKEND_HOME" = '/' ]] || [[ "$FRONTEND_HOME" = '/' ]] then
-    echo "Working in root directory is not allowed."
-    exit 1;
-fi
 
 cd $FRONTEND_HOME
-echo "\nWorking directory: $FRONTEND_HOME"
+exit_if_last_command_fails
 
-echo "\n[env]"
-env
 
-echo "\n[update codebase]"
-git reset --hard
+echo "[从 GitHub 下载更新]"
+git reset --hard > /dev/null
 git pull
+exit_if_last_command_fails
+git log -1
+echo ""
 
-echo "\n[build]"
+
+echo "[构建]"
 npm install
 npm run build
+exit_if_last_command_fails
+echo ""
 
-echo "\n[deploy]"
+
+echo "[部署到后端]"
 rm -rf "$BACKEND_HOME/public"
 cp -r "$FRONTEND_HOME/dist" "$BACKEND_HOME/public"
-echo "done"
+exit_if_last_command_fails
+echo ""
+
+
+echo "完成。"

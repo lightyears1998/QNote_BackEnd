@@ -1,47 +1,34 @@
 #!/usr/bin/env zsh
 #
-# Update backend of QNote to the latest version on git branch.
+# Update backend of QNote to the latest version on git tracking remote branch.
 #
 
-USER=qnote
-PM2_PROCESS_NAME=QNote
 
-if [[ $UID == 0 || $EUID == 0 ]]; then
-    echo "Running this script as root is not allowed."
+SCRIPT_PATH=${0:a}
+source ${0:a:h}/_setup.zsh
 
-    if [[ $USER == "root" ]]; then
-        exit 1
-    fi
 
-    echo "Try to run as $USER."
+cd $BACKEND_HOME
+exit_if_last_command_fails
 
-    id -u $USER >/dev/null 2>&1
-    if [[ $? == 1 ]]; then
-        echo "Fail to run this script as $USER, because that user $USER doesn't exist."
-        exit 1
-    fi
 
-    sudo -u $USER -H $0
-    exit $?
-fi
-
-cd "$(dirname $0)/.."
-echo "Working directory: $PWD"
-
-if [[ "$PWD" = '/' ]] then
-    echo "Working in root directory is not allowed."
-    exit 1;
-fi
-
-echo "\n[env]"
-env
-
-echo "\n[git pull]"
-git reset --hard
+echo "[从 GitHub 下载更新]"
+git reset --hard > /dev/null
 git pull
+exit_if_last_command_fails
+git log -1
+echo ""
 
-echo "\n[yarn install]"
+
+echo "[编译]"
 yarn install
+exit_if_last_command_fails
+echo ""
 
-echo "\n[pm2 restart]"
+
+echo "[重启后端]"
 pm2 restart "$PM2_PROCESS_NAME"
+exit_if_last_command_fails
+echo ""
+
+echo "完成。"
