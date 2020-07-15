@@ -21,17 +21,10 @@ if [[ $USER != $EXEC_USER ]]; then
         echo "切换身份失败，因为 $EXEC_USER 用户不存在。"
         exit 1
     fi
-
     echo ""
 
-    OLD_PWD=$PWD
-    cd $BACKEND_HOME
-
-    sudo -u $EXEC_USER -H $SCRIPT_PATH
-    STATUS=$?
-
-    cd $OLD_PWD
-    exit $STATUS
+    sudo -u $EXEC_USER -H -i $SCRIPT_PATH
+    exit $?
 fi
 
 
