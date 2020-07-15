@@ -42,6 +42,14 @@ exit_if_last_command_fails () {
 }
 
 
+git_pull_updates () {
+    git reset --hard > /dev/null
+    git pull
+    exit_if_last_command_fails
+    git --no-pager log -1
+}
+
+
 echo "[环境变量设定]"
 export PM2_PROCESS_NAME="QNote"
 

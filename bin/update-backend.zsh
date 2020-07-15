@@ -13,10 +13,7 @@ exit_if_last_command_fails
 
 
 echo "[从 GitHub 下载更新]"
-git reset --hard > /dev/null
-git pull
-exit_if_last_command_fails
-git log -1
+git_pull_updates
 echo ""
 
 
