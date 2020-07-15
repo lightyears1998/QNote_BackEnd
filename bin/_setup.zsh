@@ -10,7 +10,7 @@ if [[ $SCRIPT_PATH = "" ]]; then
 fi
 
 
-export EXEC_USER="root"
+export EXEC_USER="qnote"
 if [[ $USER != $EXEC_USER ]]; then
     echo "[执行身份检查]"
     echo "您是 $USER，脚本应当以 $EXEC_USER 身份运行。"
