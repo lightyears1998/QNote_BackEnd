@@ -36,3 +36,7 @@ node src/index.js
 ```
 
 推荐[使用 PM2 管理 QNote 进程](docs/extra.md)。
+
+## 开发
+
+请参阅[开发者文档](docs/developer.md)。

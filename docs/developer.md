@@ -7,6 +7,10 @@ yarn dev:setup
 # ssh -L 27017:127.0.0.1:27017 qnote@qnote.qfstudio.net -fN
 ```
 
-以下是比较重要的参考资料：
+## 代码规范
+
+- 在文档、代码注释和 commit 消息中，请使用规范的现代汉语普通话。
+
+## 参考资料
 
 - [TypeORM for MongoDB](https://github.com/typeorm/typeorm/blob/master/docs/mongodb.md)
