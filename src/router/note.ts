@@ -99,6 +99,7 @@ noteRouter.post("/giveUpTask", [
   try {
     const user = await db.findOneOrFail(User, { username });
     user.giveUpNoteNum += 1;
+    user.currentNoteNum -= 1;
 
     const note = await db.findOneOrFail(Note, { username, noteID });
     await db.remove(note);
