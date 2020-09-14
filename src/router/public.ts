@@ -137,6 +137,12 @@ publicRouter.post("/register", [
 });
 
 
+publicRouter.post('/authToken', [
+  body('token').notEmpty().isString()
+], async (req: Request, res: Response<JsonObject>) => {
+  // @lightyears1998 TODO
+})
+
 export {
   publicRouter
 };

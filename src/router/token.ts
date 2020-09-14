@@ -22,7 +22,7 @@ export function generateUserToken(user: User): string {
 }
 
 
-export function parseUserToken(token: string): UserToken {
+export function parseUserToken(token: string): UserToken | never {
   const parsedToken = uncapsule(token) as unknown as UserToken;
 
   const keys: Array<keyof UserToken> = ["userID", "username"];
