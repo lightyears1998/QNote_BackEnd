@@ -44,7 +44,7 @@ class App {
     this.setupLogger();
 
     this.router = express();
-    this.jwtSecret = uuidv4();
+    this.jwtSecret = process.env.NODE_ENV === "development" ? "acb52590-e620-4e0d-8686-ea613346afca" : uuidv4();
   }
 
   public get version(): string {
@@ -118,6 +118,7 @@ class App {
     this.apiRouter.use("/", routers.publicRouter);
     this.apiRouter.use("/user", routers.userRouter);
     this.apiRouter.use("/note", routers.noteRouter);
+    this.apiRouter.use("/memorial", routers.memorialRouter);
 
     this.router.use("/api", this.apiRouter);
   }
