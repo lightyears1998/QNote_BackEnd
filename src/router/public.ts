@@ -7,7 +7,7 @@ import { JsonObject } from "type-fest";
 import { User } from "../entity";
 import { logger } from "..";
 import { emailVerificationController } from "../controller";
-import { generateUserToken } from "./token";
+import { generateUserToken, parseUserToken } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
 
@@ -137,11 +137,25 @@ publicRouter.post("/register", [
 });
 
 
-publicRouter.post('/authToken', [
-  body('token').notEmpty().isString()
+publicRouter.post("/authToken", [
+  body("token").notEmpty().isString()
 ], async (req: Request, res: Response<JsonObject>) => {
-  // @lightyears1998 TODO
-})
+  const { token } = req.body;
+
+  try {
+    const { userID, username } = parseUserToken(token);
+    res.send({
+      ok: true,
+      id: userID,
+      username
+    });
+    return;
+  } catch (err) {
+    res.send({
+      ok: false
+    });
+  }
+});
 
 export {
   publicRouter
