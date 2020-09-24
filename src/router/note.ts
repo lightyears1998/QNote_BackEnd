@@ -51,18 +51,12 @@ noteRouter.post("/addTask", [
 
 
 noteRouter.post("/completeTask", [
-  body("username").isString().notEmpty(),
   body("noteID").isNumeric(),
   ArgumentValidationResultHandler
 ], async (req: Request, res: Response<string>) => {
   const db = getManager();
-  const { username } = req.body;
+  const { username } = getCurrentUser(res);
   const noteID = Number(req.body.noteID);
-
-  if (getCurrentUser(res).username !== username) {
-    res.status(HTTP_STATUS.UNAUTHORIZED).send("登录用户名与当前用户名不匹配。");
-    return;
-  }
 
   try {
     const user = await db.findOneOrFail(User, { username });
@@ -83,18 +77,12 @@ noteRouter.post("/completeTask", [
 
 
 noteRouter.post("/giveUpTask", [
-  body("username").isString().notEmpty(),
   body("noteID").isNumeric(),
   ArgumentValidationResultHandler
 ], async (req: Request, res: Response<string>) => {
   const db = getManager();
-  const { username } = req.body;
+  const { username } = getCurrentUser(res);
   const noteID = Number(req.body.noteID);
-
-  if (getCurrentUser(res).username !== username) {
-    res.status(HTTP_STATUS.UNAUTHORIZED).send("登录用户名与当前用户名不匹配。");
-    return;
-  }
 
   try {
     const user = await db.findOneOrFail(User, { username });
@@ -114,11 +102,10 @@ noteRouter.post("/giveUpTask", [
 
 
 noteRouter.post("/deleteNote", [
-  body("username").isString().notEmpty(),
   body("noteID").isNumeric(),
   ArgumentValidationResultHandler
 ], async (req: Request, res: Response<string>) => {
-  const { username } = req.body;
+  const { username } = getCurrentUser(res);
   const noteID = Number(req.body.noteID);
   const db = getManager();
 
