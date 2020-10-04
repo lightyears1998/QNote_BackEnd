@@ -1,5 +1,6 @@
 # Editors
-.vscode
+.vscode/**
+!.vscode/cspell.json
 
 # Node.js Runtime
 node_modules

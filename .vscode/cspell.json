@@ -1,0 +1,9 @@
+{
+  "allowCompoundWords": true,
+  "words": [
+    "qnote",
+    "typeorm",
+    "typedoc",
+    "tsdoc"
+  ]
+}

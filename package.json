@@ -14,7 +14,7 @@
     "start": "node lib/index.js",
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "dev:setup": "ssh -L 27017:127.0.0.1:27017 qnote@qnote.qfstudio.net -fN",
-    "clean": "del lib",
+    "clean": "del-cli lib",
     "clean:log": "del var/log",
     "prebuild": "yarn clean",
     "build": "tsc",

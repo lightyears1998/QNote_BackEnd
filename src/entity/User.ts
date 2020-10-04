@@ -14,10 +14,10 @@ export class User {
   username: string
 
   /**
-   * `email` is always lowercase, whlie `displayEmail` can be mixed case
+   * `email` is always lowercase, while `displayEmail` can be mixed case
    */
   @Column({
-    comment: "`email` is always lowercase, whlie `displayEmail` can be mixed case"
+    comment: "`email` is always lowercase, while `displayEmail` can be mixed case"
   })
   email: string
 

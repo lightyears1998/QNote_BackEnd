@@ -3,5 +3,5 @@ export * from "./Note";
 export * from "./Memorial";
 export * from "./Mail";
 
-export * from "./EmailVerficationCode";
+export * from "./EmailVerificationCode";
 export * from "./Captcha";
