@@ -1,6 +1,7 @@
 import path from "path";
 import process from "process";
 import http from "http";
+import { SSL_OP_MICROSOFT_SESS_ID_BUG } from "constants";
 import { v4 as uuidV4 } from "uuid";
 import { Connection, createConnection, getManager } from "typeorm";
 import express, { Router } from "express";
@@ -105,6 +106,7 @@ class App {
     this.router.use(routers.CorsHandler);
 
     this.router.use(express.static(path.join(__dirname, "../public")));
+    this.router.use("/avatars", express.static(path.join(__dirname, "../var/avatars")));
 
     this.apiRouter = Router();
     this.apiRouter.use(expressWinston.logger({

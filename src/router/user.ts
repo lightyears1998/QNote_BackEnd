@@ -1,7 +1,11 @@
+import path from "path";
 import express, { Request, Response } from "express";
 import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { body } from "express-validator";
+import multer from "multer";
+import fs from "fs-extra";
+import sha1 from "sha1";
 import { User, Note } from "../entity";
 import { logger } from "..";
 import { UserTokenHandler, getCurrentUser } from "./token";
@@ -55,6 +59,57 @@ userRouter.post("/nickname", [
   });
 });
 
+
+const avatarStoragePath = path.resolve(__dirname, "../../var/avatars");
+fs.ensureDirSync(avatarStoragePath);
+
+function getAvatarFilePath(avatarFilename: string) {
+  return path.resolve(avatarStoragePath, `./${avatarFilename.substr(0, 2)}/`, avatarFilename);
+}
+
+userRouter.get("/avatar", async (req: Request, res: Response<unknown>) => {
+  const db = getManager();
+
+  const { username } = getCurrentUser(res);
+  const user = await db.findOneOrFail(User, { username });
+
+  if (user.avatar) {
+    res.sendFile(getAvatarFilePath(user.avatar));
+  } else {
+    res.json("用户没有设置头像。");
+  }
+});
+
+userRouter.post("/avatar", multer({ limits: {
+  fileSize: 1024 * 1024 * 2 // 2 MiB
+} }).single("avatar"), async (req: Request, res: Response<unknown>) => {
+  const db = getManager();
+
+  const { username } = getCurrentUser(res);
+  let user = await db.findOneOrFail(User, { username: username });
+
+  const extname = path.extname(req.file.originalname);
+  if (!extname) {
+    res.json("必须上传带有拓展名的图片。");
+  }
+
+  const avatarFilename = `${sha1(username)}${extname}`;
+  const avatarFilePath = getAvatarFilePath(avatarFilename);
+  const avatarDirPath = path.dirname(avatarFilePath);
+
+  if (user.avatar) {
+    await fs.remove(getAvatarFilePath(user.avatar));
+  }
+
+  await fs.ensureDir(avatarDirPath);
+  await fs.writeFile(avatarFilePath, req.file.buffer);
+
+  user.avatar = avatarFilename;
+  user.avatarUrl = `/avatars/${user.avatar.substr(0, 2)}/${user.avatar}`;
+  user = await db.save(User, user);
+
+  res.json(user);
+});
 
 export {
   userRouter

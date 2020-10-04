@@ -41,7 +41,8 @@ export function parseUserToken(token: string): UserToken | never {
 
 export const UserTokenHandler: express.Handler = function (req, res, next) {
   if (req.method !== "OPTIONS") {
-    const token = req.params.token || req.query.token || req.body.token;
+    const token = req.headers.token || req.params.token || req.query.token || req.body.token;
+
     if (!token) {
       res.status(HTTP_STATUS.UNAUTHORIZED).send("必须携带 Token 参数。");
       return;
