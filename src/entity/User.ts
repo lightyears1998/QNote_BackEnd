@@ -13,6 +13,9 @@ export class User {
   @Column()
   username: string
 
+  @Column()
+  nickname: string
+
   /**
    * `email` is always lowercase, while `displayEmail` can be mixed case
    */

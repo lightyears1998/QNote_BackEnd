@@ -1,7 +1,7 @@
 import path from "path";
 import process from "process";
 import http from "http";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidV4 } from "uuid";
 import { Connection, createConnection, getManager } from "typeorm";
 import express, { Router } from "express";
 import compression from "compression";
@@ -44,7 +44,7 @@ class App {
     this.setupLogger();
 
     this.router = express();
-    this.jwtSecret = process.env.NODE_ENV === "development" ? "acb52590-e620-4e0d-8686-ea613346afca" : uuidv4();
+    this.jwtSecret = process.env.NODE_ENV === "development" ? "acb52590-e620-4e0d-8686-ea613346afca" : uuidV4();
   }
 
   public get version(): string {
