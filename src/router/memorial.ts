@@ -3,7 +3,7 @@ import { body } from "express-validator";
 import { JsonObject } from "type-fest";
 import { getMongoManager } from "typeorm";
 import { Memorial } from "../entity";
-import { getCurrentUser, UserTokenHanler } from "./token";
+import { getCurrentUser, UserTokenHandler } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
 
@@ -13,7 +13,7 @@ export const memorialRouter = express.Router();
 /**
  * 纪念日路由
  */
-memorialRouter.use(UserTokenHanler);
+memorialRouter.use(UserTokenHandler);
 
 
 memorialRouter.post("/", async (req: Request, res: Response<JsonObject>) => {

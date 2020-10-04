@@ -3,13 +3,13 @@ import { getManager } from "typeorm";
 import * as HTTP_STATUS from "http-status-codes";
 import { User, Note } from "../entity";
 import { logger } from "..";
-import { UserTokenHanler, getCurrentUser } from "./token";
+import { UserTokenHandler, getCurrentUser } from "./token";
 
 
 const userRouter = express.Router();
 
 
-userRouter.use(UserTokenHanler);
+userRouter.use(UserTokenHandler);
 
 
 userRouter.get("/getMessage", async (req: Request, res: Response<unknown>) => {

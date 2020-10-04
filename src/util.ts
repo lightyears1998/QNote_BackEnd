@@ -15,7 +15,7 @@ export function capsule(token: JsonObject): string {
  *
  * 若 token 格式不正确，可以抛出 SyntaxError
  */
-export function uncapsule(token: string, verify = true): JsonObject {
+export function unCapsule(token: string, verify = true): JsonObject {
   const payload = verify ? jwt.verify(token, app.jwtSecret) : jwt.decode(token);
   if (typeof payload === "string") {
     return JSON.parse(payload);

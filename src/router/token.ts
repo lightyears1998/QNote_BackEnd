@@ -1,7 +1,7 @@
 import express, { Response } from "express";
 import * as HTTP_STATUS from "http-status-codes";
 import { JsonObject } from "type-fest";
-import { uncapsule, capsule } from "../util";
+import { unCapsule, capsule } from "../util";
 import { User } from "../entity";
 import { logger } from "..";
 
@@ -23,7 +23,7 @@ export function generateUserToken(user: User): string {
 
 
 export function parseUserToken(token: string): UserToken | never {
-  const parsedToken = uncapsule(token) as unknown as UserToken;
+  const parsedToken = unCapsule(token) as unknown as UserToken;
 
   const keys: Array<keyof UserToken> = ["userID", "username"];
   for (const key of keys) {
@@ -39,7 +39,7 @@ export function parseUserToken(token: string): UserToken | never {
 }
 
 
-export const UserTokenHanler: express.Handler = function (req, res, next) {
+export const UserTokenHandler: express.Handler = function (req, res, next) {
   if (req.method !== "OPTIONS") {
     const token = req.params.token || req.query.token || req.body.token;
     if (!token) {

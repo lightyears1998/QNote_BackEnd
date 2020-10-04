@@ -5,7 +5,7 @@ import * as HTTP_STATUS from "http-status-codes";
 import { JsonObject } from "type-fest";
 import { User, Note } from "../entity";
 import { logger } from "..";
-import { UserTokenHanler, getCurrentUser } from "./token";
+import { UserTokenHandler, getCurrentUser } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
 
@@ -15,7 +15,7 @@ export const noteRouter = express.Router();
 /**
  * 笔记路由
  */
-noteRouter.use(UserTokenHanler);
+noteRouter.use(UserTokenHandler);
 
 
 noteRouter.post("/addTask", [
