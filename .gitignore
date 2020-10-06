@@ -11,3 +11,6 @@ docs/tsdoc
 lib
 public
 var
+
+# Logs
+yarn-*.log
