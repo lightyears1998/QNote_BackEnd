@@ -26,7 +26,7 @@ echo ""
 
 echo "[部署到后端]"
 rm -rf "$BACKEND_HOME/public/pc"
-cp -rv "$PC_FRONTEND_HOME/dist" "$BACKEND_HOME/public/pc"
+cp -rv "$PC_FRONTEND_HOME/build" "$BACKEND_HOME/public/pc"
 exit_if_last_command_fails
 echo ""
 

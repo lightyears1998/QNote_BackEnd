@@ -53,7 +53,7 @@ export FRONTEND_HOME="${0:a:h}/../../qnote"
 export FRONTEND_HOME=$FRONTEND_HOME:A
 
 export PC_FRONTEND_HOME="${0:a:h}/../../qnote-pc"
-export PC_FRONTEND_HOME=$FRONTEND_HOME:A
+export PC_FRONTEND_HOME=$PC_FRONTEND_HOME:A
 
 env
 echo ""
