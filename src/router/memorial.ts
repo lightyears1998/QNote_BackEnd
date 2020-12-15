@@ -7,12 +7,12 @@ import { getCurrentUser, UserTokenHandler } from "./token";
 import { ArgumentValidationResultHandler } from "./util";
 
 
-export const memorialRouter = express.Router();
-
-
 /**
  * 纪念日路由
  */
+export const memorialRouter = express.Router();
+
+
 memorialRouter.use(UserTokenHandler);
 
 

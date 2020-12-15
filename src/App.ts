@@ -1,7 +1,6 @@
 import path from "path";
 import process from "process";
 import http from "http";
-import { SSL_OP_MICROSOFT_SESS_ID_BUG } from "constants";
 import { v4 as uuidV4 } from "uuid";
 import { Connection, createConnection, getManager } from "typeorm";
 import express, { Router } from "express";
@@ -121,6 +120,7 @@ class App {
     this.apiRouter.use("/user", routers.userRouter);
     this.apiRouter.use("/note", routers.noteRouter);
     this.apiRouter.use("/memorial", routers.memorialRouter);
+    this.apiRouter.use("/arrangement", routers.arrangementRouter);
 
     this.router.use("/api", this.apiRouter);
   }
