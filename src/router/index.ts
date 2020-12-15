@@ -3,3 +3,4 @@ export * from "./user";
 export * from "./note";
 export * from "./memorial";
 export * from "./util";
+export * from "./arrangement";
